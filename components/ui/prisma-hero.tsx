@@ -3,7 +3,6 @@
 import { motion, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useRef } from "react";
-import Link from "next/link";
 
 /* ---------------- WordsPullUp ---------------- */
 interface WordsPullUpProps {
@@ -84,14 +83,6 @@ export const WordsPullUpMultiStyle = ({ segments, className = "", style }: Words
 };
 
 /* ---------------- DBYoung Hero ---------------- */
-const navItems = [
-  { label: "Artista", href: "/artista" },
-  { label: "Musica", href: "/musica" },
-  { label: "Shop", href: "/shop" },
-  { label: "Eventi", href: "/eventi" },
-  { label: "Contatti", href: "/contatti" },
-];
-
 export const DBYoungHero = () => {
   return (
     <section className="h-[100svh] w-full px-2 pt-2 md:px-3 md:pt-3">
@@ -114,23 +105,7 @@ export const DBYoungHero = () => {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-[#0A0A0B]" />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_100%,rgba(255,77,0,0.28),transparent_70%)]" />
 
-        {/* Navbar */}
-        <nav className="absolute left-1/2 top-0 z-20 -translate-x-1/2">
-          <div className="flex items-center gap-3 rounded-b-2xl border border-white/10 border-t-0 bg-black/80 px-4 py-2 backdrop-blur-md sm:gap-6 md:gap-10 md:rounded-b-3xl md:px-8 lg:gap-12">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="link-fire text-[10px] transition-colors sm:text-xs md:text-sm"
-                style={{ color: "rgba(255, 255, 255, 0.8)" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#FF6A00")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255, 255, 255, 0.8)")}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </nav>
+        {/* Navbar globale: pill centrata in alto (components/navbar.tsx) — non duplicare qui */}
 
         {/* Hero content */}
         <div className="absolute bottom-0 left-0 right-0 px-4 pb-2 sm:px-6 md:px-10">
@@ -143,7 +118,7 @@ export const DBYoungHero = () => {
                 className="mb-2 inline-flex items-center gap-2 rounded-full border border-fire/40 bg-black/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-fire-ember backdrop-blur md:text-xs"
               >
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-fire" />
-                Jazz · Blues · Modern Energy
+                Jazz · Blues · Classica
               </motion.p>
               <h1
                 className="font-display font-medium leading-[0.85] tracking-[-0.07em] text-[19vw] sm:text-[17vw] md:text-[15vw] lg:text-[12vw] xl:text-[11vw]"
@@ -164,8 +139,8 @@ export const DBYoungHero = () => {
                 className="text-xs text-white/70 sm:text-sm md:text-base"
                 style={{ lineHeight: 1.4 }}
               >
-                Compositore a 360°: jazz e blues con un tono moderno, attivo ed
-                energetico — strumenti veri, fiati live, groove che muove i club
+                Compositore a 360°: jazz, blues e musica classica con un tono moderno, attivo ed
+                energetico — strumenti veri, fiati live, groove che muove i club,
                 e i festival. Compra beat, sample pack o porta DBYoung sul tuo palco.
               </motion.p>
 

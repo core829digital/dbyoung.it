@@ -7,73 +7,84 @@ import { useState } from "react";
 import { NAV } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
+/**
+ * Header stile Prisma: pill centrata, incollata alla parte superiore,
+ * con angoli inferiori arrotondati (rounded-b-2xl/3xl).
+ */
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-obsidian/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
+    <header className="fixed inset-x-0 top-0 z-50 flex flex-col items-center">
+      <div className="flex items-center gap-2 rounded-b-2xl border border-t-0 border-white/10 bg-black/85 px-3 py-2 shadow-card backdrop-blur-md sm:gap-4 sm:px-5 md:gap-7 md:rounded-b-3xl md:px-7">
         <Link href="/" className="group flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-fire to-fire-deep shadow-fire transition-transform group-hover:scale-110 group-hover:rotate-6">
-            <Flame className="h-4 w-4 text-white" />
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-fire to-fire-deep shadow-fire transition-transform group-hover:scale-110 group-hover:rotate-6">
+            <Flame className="h-3.5 w-3.5 text-white" />
           </span>
-          <span className="font-display text-lg font-bold tracking-tight text-white">
+          <span className="font-display text-base font-bold tracking-tight text-white md:text-lg">
             DB<span className="text-fire-gradient">Young</span>
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex">
-          {NAV.map((n) => (
+        <span className="hidden h-5 w-px bg-white/15 sm:block" />
+
+        <nav className="hidden items-center gap-4 md:gap-7 lg:flex">
+          {NAV.filter((n) => n.href !== "/").map((n) => (
             <Link
               key={n.href}
               href={n.href}
               className={cn(
-                "link-fire text-sm transition-colors",
+                "link-fire text-[10px] transition-colors sm:text-xs md:text-sm",
                 pathname === n.href ? "text-fire-hot" : "text-white/70 hover:text-white"
               )}
+              style={pathname === n.href ? undefined : { color: "rgba(255,255,255,0.8)" }}
             >
               {n.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            href="/eventi"
-            className="rounded-full border border-white/20 px-4 py-2 text-sm text-white/80 transition-all hover:border-fire/60 hover:text-fire-ember"
-          >
-            Prenota
-          </Link>
-          <Link href="/shop" className="btn-fire rounded-full px-5 py-2 text-sm font-semibold">
-            Shop
-          </Link>
-        </div>
+        <Link
+          href="/shop"
+          className="btn-fire hidden rounded-full px-4 py-1.5 text-xs font-semibold sm:block md:text-sm"
+        >
+          Shop
+        </Link>
 
         <button
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white lg:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white lg:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Menu"
         >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </button>
       </div>
 
       {open && (
-        <nav className="border-t border-white/10 bg-obsidian px-4 py-4 lg:hidden">
+        <nav className="mt-2 w-[calc(100%-1.5rem)] max-w-md rounded-2xl border border-white/10 bg-black/95 p-3 shadow-card backdrop-blur-xl lg:hidden">
           <div className="flex flex-col gap-1">
             {NAV.map((n) => (
               <Link
                 key={n.href}
                 href={n.href}
                 onClick={() => setOpen(false)}
-                className="rounded-xl px-3 py-2.5 text-base text-white/80 transition-colors hover:bg-fire/10 hover:text-fire-ember"
+                className={cn(
+                  "rounded-xl px-3 py-2.5 text-base transition-colors",
+                  pathname === n.href
+                    ? "bg-fire/15 text-fire-ember"
+                    : "text-white/80 hover:bg-fire/10 hover:text-fire-ember"
+                )}
               >
                 {n.label}
               </Link>
             ))}
-            <Link href="/shop" onClick={() => setOpen(false)} className="btn-fire mt-2 rounded-full px-5 py-3 text-center font-semibold">
+            <Link
+              href="/shop"
+              onClick={() => setOpen(false)}
+              className="btn-fire mt-2 rounded-full px-5 py-3 text-center font-semibold"
+            >
               Vai allo Shop
             </Link>
           </div>

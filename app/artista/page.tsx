@@ -14,11 +14,11 @@ export default function ArtistaPage() {
             DB<span className="text-fire-gradient">Young</span>
           </h1>
           <p className="mt-5 leading-relaxed text-white/65">
-            Artista e compositore a 360 gradi: jazz e blues con un tono moderno, attivo ed energetico.
+            Artista e compositore a 360 gradi: jazz, blues e musica classica con un tono moderno, attivo ed energetico.
             Lavora con strumenti vivi e reali — piano, chitarra, basso, batteria e fiati — tra studio e palco.
           </p>
           <p className="mt-4 leading-relaxed text-white/65">
-            Il suo suono unisce la tradizione alla produzione contemporanea: perfetto per artisti che cercano
+            Il suo suono unisce la tradizione jazz, blues e classica alla produzione contemporanea: perfetto per artisti che cercano
             beat con carattere, sample pack registrati live e show dal vivo ad alta energia.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">

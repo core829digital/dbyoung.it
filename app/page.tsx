@@ -36,12 +36,12 @@ export default function Home() {
           <Reveal>
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-fire-hot">L&apos;artista</p>
             <h2 className="font-display text-3xl font-semibold tracking-tight md:text-5xl">
-              Jazz & blues con un <span className="text-fire-gradient">tono moderno</span>, attivo ed energetico.
+              Jazz, blues e classica con un <span className="text-fire-gradient">tono moderno</span>, attivo ed energetico.
             </h2>
             <p className="mt-5 leading-relaxed text-white/60">
               Dimitri Bouturline, in arte <strong className="text-white">DBYoung</strong>, è un compositore a 360
-              gradi: scrive, arrangia e produce con strumenti vivi e reali — dal piano ai fiati, dalla chitarra
-              alla batteria. Un ponte tra la tradizione jazz-blues e il suono di oggi.
+              gradi: spazia dal jazz al blues fino alla musica classica, scrivendo, arrangiando e producendo con strumenti vivi e reali — dal piano ai fiati, dalla chitarra
+                alla batteria. Un ponte tra tradizione jazz, blues e classica e il suono di oggi.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link href="/artista" className="btn-fire inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold">
@@ -55,7 +55,7 @@ export default function Home() {
           <Reveal delay={0.15}>
             <div className="relative overflow-hidden rounded-[2rem] border border-white/10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=1000&q=80" alt="DBYoung live — jazz" className="aspect-[4/5] w-full object-cover md:aspect-square" />
+              <img src="https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=1000&q=80" alt="DBYoung live — jazz, blues e musica classica" className="aspect-[4/5] w-full object-cover md:aspect-square" />
               <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-2xl border border-white/10 bg-black/60 px-4 py-3 backdrop-blur">
                 <div className="flex items-center gap-2 text-sm text-white/80"><Flame className="h-4 w-4 text-fire" /> Live · Studio · Collab</div>
