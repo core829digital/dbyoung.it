@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --obsidian: #0a0a0b;
+  --fire: #ff4d00;
+  --fire-hot: #ff6a00;
+  --bone: #ffffff;
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--obsidian);
+  color: var(--bone);
+  font-family: var(--font-body, system-ui, sans-serif);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--fire);
+  color: #fff;
+}
+
+/* film grain / noise */
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* CTA fire button */
+.btn-fire {
+  position: relative;
+  background: linear-gradient(135deg, #ff4d00 0%, #ff6a00 55%, #ff8a1e 100%);
+  color: #fff;
+  box-shadow: 0 0 24px rgba(255, 77, 0, 0.45), 0 8px 40px rgba(255, 77, 0, 0.18);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s, filter 0.25s;
+}
+.btn-fire:hover {
+  transform: translateY(-2px) scale(1.02);
+  filter: brightness(1.08);
+  box-shadow: 0 0 36px rgba(255, 77, 0, 0.65), 0 12px 48px rgba(255, 77, 0, 0.28);
+}
+.btn-fire:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.card-hover {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s, box-shadow 0.35s;
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255, 77, 0, 0.55) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55), 0 0 32px rgba(255, 77, 0, 0.18);
+}
+
+.link-fire {
+  position: relative;
+}
+.link-fire::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, #ff4d00, #ff8a1e);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.link-fire:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.text-fire-gradient {
+  background: linear-gradient(100deg, #ffb25e 0%, #ff6a00 45%, #ff4d00 70%, #ff8a1e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0b;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#ff4d00, #7a2600);
+  border-radius: 8px;
+}

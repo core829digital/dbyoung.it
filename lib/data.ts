@@ -1,0 +1,121 @@
+export type ProductType = "beat" | "sample-pack" | "offerta";
+
+export interface Product {
+  id: string;
+  slug: string;
+  title: string;
+  type: ProductType;
+  price: number;
+  oldPrice?: number;
+  bpm?: number;
+  key?: string;
+  cover: string;
+  audioPreview?: string;
+  stripeLink: string;
+  tags: string[];
+  featured?: boolean;
+  description: string;
+}
+
+/**
+ * Catalogo placeholder — Dimitri potrà gestirlo da /admin
+ * (upload beat / sample pack con Stripe Payment Link).
+ * Le cover usano Unsplash; sostituire con artwork reali.
+ */
+export const PRODUCTS: Product[] = [
+  {
+    id: "p1",
+    slug: "midnight-brass",
+    title: "Midnight Brass",
+    type: "beat",
+    price: 49,
+    oldPrice: 79,
+    bpm: 92,
+    key: "D min",
+    cover: "https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800&q=80",
+    stripeLink: "#",
+    tags: ["jazz", "blues", "live horns"],
+    featured: true,
+    description:
+      "Beat jazz-blues moderno con fiati veri, contrabbasso e batteria registrata live. Stems inclusi.",
+  },
+  {
+    id: "p2",
+    slug: "velvet-groove",
+    title: "Velvet Groove",
+    type: "beat",
+    price: 39,
+    bpm: 88,
+    key: "G min",
+    cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=80",
+    stripeLink: "#",
+    tags: ["neo-soul", "rhodes", "smooth"],
+    featured: true,
+    description:
+      "Groove vellutato con Rhodes, chitarra live e basso caldo. Perfetto per voci soul e rap melodico.",
+  },
+  {
+    id: "p3",
+    slug: "fire-on-52nd",
+    title: "Fire on 52nd",
+    type: "beat",
+    price: 59,
+    bpm: 100,
+    key: "A min",
+    cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&q=80",
+    stripeLink: "#",
+    tags: ["energetic", "big band", "modern jazz"],
+    featured: true,
+    description:
+      "Energia da club jazz di New York con sezione fiati, piano stride moderno e drop potente.",
+  },
+  {
+    id: "p4",
+    slug: "obsidian-keys-vol1",
+    title: "Obsidian Keys Vol. 1 — Sample Pack",
+    type: "sample-pack",
+    price: 29,
+    oldPrice: 45,
+    cover: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=800&q=80",
+    stripeLink: "#",
+    tags: ["120+ samples", "piano", "rhodes", "royalty-free"],
+    featured: true,
+    description:
+      "120+ loop e one-shot di piano, Rhodes e Wurlitzer registrati su strumenti veri. 100% royalty-free.",
+  },
+  {
+    id: "p5",
+    slug: "live-drums-blues",
+    title: "Live Drums & Blues Guitars",
+    type: "sample-pack",
+    price: 25,
+    cover: "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=800&q=80",
+    stripeLink: "#",
+    tags: ["drums", "guitar", "live"],
+    description:
+      "Batterie live e chitarre blues registrate in studio: groove, fill, lick e riff pronti al mix.",
+  },
+  {
+    id: "p6",
+    slug: "bundle-fire-starter",
+    title: "Fire Starter Bundle — 3 Beat + 1 Pack",
+    type: "offerta",
+    price: 99,
+    oldPrice: 176,
+    cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80",
+    stripeLink: "#",
+    tags: ["bundle", "-44%", "best value"],
+    featured: true,
+    description:
+      "Offerta lancio: 3 beat a scelta + Obsidian Keys Vol. 1. Licenza premium inclusa.",
+  },
+];
+
+export const NAV = [
+  { label: "Home", href: "/" },
+  { label: "Chi è DBYoung", href: "/artista" },
+  { label: "Musica", href: "/musica" },
+  { label: "Shop", href: "/shop" },
+  { label: "Eventi", href: "/eventi" },
+  { label: "Contatti", href: "/contatti" },
+];
