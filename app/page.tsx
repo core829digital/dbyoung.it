@@ -55,10 +55,10 @@ export default function Home() {
           <Reveal delay={0.15}>
             <div className="relative overflow-hidden rounded-[2rem] border border-white/10">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=1000&q=80" alt="DBYoung live — jazz, blues e musica classica" className="aspect-[4/5] w-full object-cover md:aspect-square" />
+              <img src="https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=1000&q=80" alt="DBYoung — eventi, jazz, blues e musica classica" className="aspect-[4/5] w-full object-cover md:aspect-square" />
               <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-2xl border border-white/10 bg-black/60 px-4 py-3 backdrop-blur">
-                <div className="flex items-center gap-2 text-sm text-white/80"><Flame className="h-4 w-4 text-fire" /> Live · Studio · Collab</div>
+                <div className="flex items-center gap-2 text-sm text-white/80"><Flame className="h-4 w-4 text-fire" /> Eventi · Studio · Collab</div>
                 <Link href="/eventi" className="text-sm font-semibold text-fire-hot hover:text-fire-ember">Prenota →</Link>
               </div>
             </div>
@@ -85,11 +85,11 @@ export default function Home() {
         <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-20 md:grid-cols-2 md:px-8">
           <Reveal>
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-fire-hot">Eventi & Booking</p>
-            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-5xl">Porta DBYoung <span className="text-fire-gradient">sul tuo palco.</span></h2>
-            <p className="mt-4 leading-relaxed text-white/60">Club, festival, eventi privati e collaborazioni. Prenota una call conoscitiva: raccontaci la tua idea, al resto pensiamo noi — scaletta, band e produzione.</p>
+            <h2 className="font-display text-3xl font-semibold tracking-tight md:text-5xl">Organizza il tuo evento <span className="text-fire-gradient">con DBYoung.</span></h2>
+            <p className="mt-4 leading-relaxed text-white/60">Club, festival, eventi privati e collaborazioni: Dimitri li organizza e li produce. Prenota una call conoscitiva: raccontaci la tua idea, al resto pensiamo noi — scaletta, artisti, band e produzione.</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link href="/eventi" className="btn-fire inline-flex items-center gap-2 rounded-full px-7 py-3.5 font-semibold">
-                <CalendarCheck className="h-4 w-4" /> Prenota una call
+                <CalendarCheck className="h-4 w-4" /> Organizza ora
               </Link>
               <a href={SOCIALS.spotify} className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm text-white/85 transition-all hover:border-fire/60 hover:text-fire-ember">
                 <Radio className="h-4 w-4" /> Spotify

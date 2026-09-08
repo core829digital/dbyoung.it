@@ -19,7 +19,7 @@ export function Footer() {
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">
             Dimitri Bouturline — jazz, blues e musica classica dal suono moderno, strumenti veri, energia pura.
-            Beat, sample pack ed eventi live.
+            Beat, sample pack e organizzazione eventi.
           </p>
           <div className="mt-5 flex gap-2">
             {[

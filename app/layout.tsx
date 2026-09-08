@@ -8,7 +8,7 @@ import { ChatWidget } from "@/components/chat-widget";
 export const metadata: Metadata = {
   title: "DBYoung · Dimitri Bouturline — Jazz, Blues & Classica | Beat, Sample Pack, Eventi",
   description:
-    "DBYoung (Dimitri Bouturline): compositore di jazz, blues e musica classica dal suono moderno. Compra beat e sample pack con strumenti veri, prenota eventi live e collabora con l'artista.",
+    "DBYoung (Dimitri Bouturline): compositore di jazz, blues e musica classica dal suono moderno. Compra beat e sample pack con strumenti veri, organizza eventi e collabora con l'artista.",
   metadataBase: new URL("https://dbyoung.it"),
   openGraph: {
     title: "DBYoung · Dimitri Bouturline",

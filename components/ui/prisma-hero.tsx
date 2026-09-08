@@ -140,8 +140,8 @@ export const DBYoungHero = () => {
                 style={{ lineHeight: 1.4 }}
               >
                 Compositore a 360°: jazz, blues e musica classica con un tono moderno, attivo ed
-                energetico — strumenti veri, fiati live, groove che muove i club,
-                e i festival. Compra beat, sample pack o porta DBYoung sul tuo palco.
+                energetico — strumenti veri ed eventi organizzati che muovono club
+                e festival. Compra beat, sample pack o affidagli il tuo evento.
               </motion.p>
 
               <div className="flex flex-wrap gap-3">
@@ -164,7 +164,7 @@ export const DBYoungHero = () => {
                   href="/eventi"
                   className="inline-flex items-center gap-2 self-start rounded-full border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-medium text-white backdrop-blur transition-all hover:border-fire/60 hover:bg-fire/10 hover:text-fire-ember sm:text-base"
                 >
-                  Prenota un Evento
+                  Organizza il tuo Evento
                 </motion.a>
               </div>
             </div>

@@ -15,11 +15,11 @@ export default function ArtistaPage() {
           </h1>
           <p className="mt-5 leading-relaxed text-white/65">
             Artista e compositore a 360 gradi: jazz, blues e musica classica con un tono moderno, attivo ed energetico.
-            Lavora con strumenti vivi e reali — piano, chitarra, basso, batteria e fiati — tra studio e palco.
+            Lavora con strumenti vivi e reali — piano, chitarra, basso, batteria e fiati — tra studio e organizzazione di eventi.
           </p>
           <p className="mt-4 leading-relaxed text-white/65">
             Il suo suono unisce la tradizione jazz, blues e classica alla produzione contemporanea: perfetto per artisti che cercano
-            beat con carattere, sample pack registrati live e show dal vivo ad alta energia.
+            beat con carattere, sample pack registrati live ed eventi organizzati e prodotti ad alta energia.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/shop" className="btn-fire inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold">Compra i Beat <ArrowRight className="h-4 w-4" /></Link>

@@ -14,8 +14,8 @@ export default function ContattiPage() {
       <Reveal delay={0.1} className="mt-10 grid gap-4 sm:grid-cols-2">
         <a href="/eventi" className="card-hover rounded-3xl border border-fire/30 bg-gradient-to-br from-[#200d00] to-obsidian-card p-7">
           <CalendarCheck className="h-6 w-6 text-fire" />
-          <p className="mt-3 font-display text-lg font-semibold">Booking eventi</p>
-          <p className="mt-1 text-sm text-white/55">Prenota una call gratuita dal calendario.</p>
+          <p className="mt-3 font-display text-lg font-semibold">Organizzazione eventi</p>
+          <p className="mt-1 text-sm text-white/55">Raccontaci la tua idea o prenota una call dal calendario.</p>
         </a>
         <a href="mailto:info@dbyoung.it" className="card-hover rounded-3xl border border-white/10 bg-obsidian-card p-7">
           <Mail className="h-6 w-6 text-fire" />

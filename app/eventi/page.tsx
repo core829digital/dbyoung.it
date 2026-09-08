@@ -10,10 +10,11 @@ export default function EventiPage() {
       <Reveal className="mx-auto max-w-3xl text-center">
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-fire-hot">Eventi · events.dbyoung.it</p>
         <h1 className="font-display text-4xl font-semibold tracking-tight md:text-6xl">
-          Prenota <span className="text-fire-gradient">DBYoung live</span>
+          Organizza il tuo evento <span className="text-fire-gradient">con DBYoung</span>
         </h1>
         <p className="mt-4 leading-relaxed text-white/60">
-          Club, festival, eventi privati e collaborazioni. Scegli un orario dal calendario per una call conoscitiva gratuita —
+          Club, festival, eventi privati e collaborazioni: Dimitri Bouturline li organizza e li produce — non si esibisce come cantante.
+          Scegli un orario dal calendario per una call conoscitiva gratuita —
           oppure scrivici direttamente con i dettagli del tuo evento.
         </p>
       </Reveal>
