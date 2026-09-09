@@ -49,7 +49,7 @@ Domini: `dbyoung.it` (prod) + in futuro `shop.dbyoung.it`, `events.dbyoung.it` (
 2. **Foto/video reali** di Dimitri (hero, pagina artista) — ora Unsplash placeholder
 3. **Calendly reale** (`NEXT_PUBLIC_CALENDLY_URL` / `lib/utils.ts`)
 4. **Stripe Payment Link** per ogni prodotto (`lib/data.ts` → poi da `/admin`)
-5. **Chiavi**: Convex URL, Resend API key + dominio verificato, P.IVA e ragione sociale per footer/termini
+5. **Chiavi**: Convex URL, Resend API key + dominio verificato, email attive (info@, booking@, privacy@)
 6. **Auth reale admin** (Convex Auth) + banner cookie consenso
 7. **Embed Spotify** in `/musica`
 
