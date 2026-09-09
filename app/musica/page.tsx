@@ -16,7 +16,7 @@ const PLATFORMS = [
 export default function MusicaPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 pb-24 pt-28 md:px-8">
-      <SectionHeading kicker="Musica" title={<>Ascolta <span className="text-fire-gradient">DBYoung</span></>} sub="Link ufficiali in arrivo — seguici per nuove uscite, beat tape e live session." />
+      <SectionHeading kicker="Musica" title={<>Ascolta <span className="text-fire-gradient">DBYoung</span></>} sub="Seguici per nuove uscite, beat tape e session in studio." />
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {PLATFORMS.map(([name, href, desc]) => (
           <Reveal key={name}>
@@ -30,9 +30,16 @@ export default function MusicaPage() {
           </Reveal>
         ))}
       </div>
-      <Reveal className="mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-obsidian-card p-6">
-        {/* TODO: incollare qui l'embed Spotify dell'artista (open.spotify.com → Share → Embed) */}
-        <p className="text-sm text-white/55">🎧 Player Spotify integrato in arrivo — incolla qui l&apos;iframe embed dell&apos;artista.</p>
+      <Reveal className="mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-obsidian-card">
+        <iframe
+          src={SOCIALS.spotifyEmbed}
+          width="100%"
+          height="420"
+          loading="lazy"
+          title="DBYoung su Spotify"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          className="block"
+        />
       </Reveal>
     </div>
   );

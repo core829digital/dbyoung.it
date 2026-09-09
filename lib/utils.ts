@@ -7,13 +7,14 @@ export function cn(...inputs: ClassValue[]) {
 
 export const SUPERADMIN_EMAIL = "contact.core829@gmail.com";
 
-/** Placeholder link — da sostituire con i link reali di DBYoung */
+/** Link ufficiali di DBYoung */
 export const SOCIALS = {
-  spotify: "#",
-  instagram: "#",
-  facebook: "#",
-  youtube: "#",
-  tiktok: "#",
+  spotify: "https://open.spotify.com/artist/38BZZnNarKezUPXXUz76pB?si=90_dcrVfR4yMmAmDfcx5oQ&utm_source=copy-link",
+  spotifyEmbed: "https://open.spotify.com/embed/artist/38BZZnNarKezUPXXUz76pB",
+  instagram: "https://www.instagram.com/dimitri_boutourline?utm_source=qr&igsi=dzV6Z2xsNDUxeXdh",
+  facebook: "https://www.facebook.com/share/19Z5t1eNJi/",
+  youtube: "https://youtube.com/channel/UCuTxCKGEvkPEPmZGZw-GQWA?si=9dRHGAKG75Igtb1R",
+  tiktok: "https://www.tiktok.com/@d.b.young6?_r=1&_t=ZN-99YtuTH71oh",
   appleMusic: "#",
   soundcloud: "#",
 };

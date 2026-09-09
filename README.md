@@ -45,7 +45,7 @@ Domini: `dbyoung.it` (prod) + in futuro `shop.dbyoung.it`, `events.dbyoung.it` (
 
 ## TODO prima del go-live (richiedimi questi materiali)
 
-1. **Link reali**: Spotify artista, Instagram, Facebook, YouTube, TikTok, Apple Music (`lib/utils.ts`)
+1. ~~Link social~~ ✅ fatto (Spotify + embed, Instagram, Facebook, YouTube, TikTok in `lib/utils.ts`)
 2. **Foto/video reali** di Dimitri (hero, pagina artista) — ora Unsplash placeholder
 3. **Calendly reale** (`NEXT_PUBLIC_CALENDLY_URL` / `lib/utils.ts`)
 4. **Stripe Payment Link** per ogni prodotto (`lib/data.ts` → poi da `/admin`)
