@@ -3,7 +3,6 @@ import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { SmoothScroll } from "@/components/smooth-scroll";
-import { ChatWidget } from "@/components/chat-widget";
 import { LanguageProvider } from "@/lib/i18n";
 
 export const metadata: Metadata = {
@@ -30,7 +29,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Navbar />
           <main className="min-h-screen">{children}</main>
           <Footer />
-          <ChatWidget />
         </LanguageProvider>
       </body>
     </html>
