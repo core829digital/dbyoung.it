@@ -111,59 +111,65 @@ export const DBYoungHero = () => {
         {/* Navbar globale: pill centrata in alto (components/navbar.tsx) — non duplicare qui */}
 
         {/* Hero content */}
-        <div className="absolute bottom-0 left-0 right-0 px-4 pb-2 sm:px-6 md:px-10">
-          <div className="grid grid-cols-12 items-end gap-4">
-            <div className="col-span-12 lg:col-span-8">
-              <motion.p
-                initial={{ y: 16, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
-                className="mb-2 inline-flex items-center gap-2 rounded-full border border-fire/40 bg-black/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-fire-ember backdrop-blur md:text-xs"
+        <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 sm:px-6 md:px-10">
+          <div className="grid grid-cols-12 items-end gap-6 lg:gap-8">
+            {/* Foto profilo artista — grande, a sinistra, stile Spotify */}
+            <div className="col-span-12 flex flex-row items-center gap-5 lg:col-span-4 lg:flex-col lg:items-start lg:gap-4 lg:pb-8">
+              <motion.div
+                initial={{ scale: 0.85, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="relative shrink-0"
               >
-                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-fire" />
-                {t.hero.badge}
-              </motion.p>
-              <h1
-                className="font-display font-medium leading-[0.85] tracking-[-0.07em] text-[19vw] sm:text-[17vw] md:text-[15vw] lg:text-[12vw] xl:text-[11vw]"
-                style={{ color: "#FFFFFF" }}
-              >
-                <WordsPullUp text="DBYoung" showAsterisk />
-              </h1>
-              <div className="mt-3 flex items-center gap-4">
-                {/* Foto profilo artista — stile Spotify, blending con lo sfondo */}
                 <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative shrink-0"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative"
                 >
-                  <div className="absolute -inset-2 rounded-full bg-fire/30 blur-xl" />
+                  <div className="absolute -inset-4 rounded-full bg-fire/30 blur-2xl" />
+                  <div className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-fire via-fire-hot to-fire-deep" />
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={PHOTOS.heroProfile}
                     alt="Dimitri Bouturline — DBYoung"
-                    className="relative h-20 w-20 rounded-full border-2 border-fire/70 object-cover shadow-fire sm:h-24 sm:w-24 md:h-28 md:w-28"
+                    className="relative h-32 w-32 rounded-full border-4 border-black object-cover shadow-fire sm:h-44 sm:w-44 lg:h-64 lg:w-64 xl:h-72 xl:w-72"
                   />
-                  <span className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-black bg-fire" />
+                  <span className="absolute bottom-2 right-2 h-5 w-5 rounded-full border-[3px] border-black bg-fire lg:bottom-4 lg:right-4 lg:h-6 lg:w-6" />
                 </motion.div>
-                <p className="font-display text-[6vw] font-light tracking-tight text-fire-gradient sm:text-[5vw] md:text-[3.5vw] lg:text-[2.6vw]">
+              </motion.div>
+              <motion.div
+                initial={{ y: 16, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.7, delay: 0.5 }}
+              >
+                <p className="font-display text-2xl font-light tracking-tight text-fire-gradient sm:text-3xl lg:text-4xl">
                   {t.hero.name}
                 </p>
-              </div>
+                <p className="mt-1 inline-flex items-center gap-2 rounded-full border border-fire/40 bg-black/60 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-fire-ember backdrop-blur md:text-[11px]">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-fire" />
+                  {t.hero.badge}
+                </p>
+              </motion.div>
             </div>
 
-            <div className="col-span-12 flex flex-col gap-5 pb-6 lg:col-span-4 lg:pb-10">
+            <div className="col-span-12 lg:col-span-8">
+              <h1
+                className="font-display font-medium leading-[0.85] tracking-[-0.07em] text-[19vw] sm:text-[17vw] md:text-[15vw] lg:text-[11vw] xl:text-[10vw]"
+                style={{ color: "#FFFFFF" }}
+              >
+                <WordsPullUp text="DBYoung" showAsterisk />
+              </h1>
               <motion.p
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="text-xs text-white/70 sm:text-sm md:text-base"
+                className="mt-3 max-w-2xl text-xs text-white/70 sm:text-sm md:text-base"
                 style={{ lineHeight: 1.4 }}
               >
                 {t.hero.desc}
               </motion.p>
 
-              <div className="flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-wrap gap-3 pb-4 lg:pb-8">
                 <motion.a
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
