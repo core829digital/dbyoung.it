@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Play, ShoppingCart, BadgePercent } from "lucide-react";
 import type { Product } from "@/lib/data";
 import { useLang } from "@/lib/i18n";
+import { trackBuy } from "@/lib/analytics";
 
 export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
   const { t } = useLang();
@@ -51,7 +52,7 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
             <span className="font-display text-2xl font-bold text-white">€{p.price}</span>
             {p.oldPrice && <span className="text-sm text-white/40 line-through">€{p.oldPrice}</span>}
           </div>
-          <a href={p.stripeLink} target={p.stripeLink === "#" ? undefined : "_blank"} rel="noreferrer" className="btn-fire flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold">
+          <a href={p.stripeLink} onClick={() => trackBuy(p.id)} target={p.stripeLink === "#" ? undefined : "_blank"} rel="noreferrer" className="btn-fire flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold">
             <ShoppingCart className="h-4 w-4" /> {t.shop.buy}
           </a>
         </div>

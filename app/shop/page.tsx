@@ -1,11 +1,12 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
 import { Reveal } from "@/components/reveal";
-import { PRODUCTS } from "@/lib/data";
+import { PRODUCTS, type Product } from "@/lib/data";
 import { useLang } from "@/lib/i18n";
+import { getCustomProducts } from "@/lib/analytics";
 
 const FILTERS = [
   { key: 0, type: undefined as string | undefined },
@@ -18,7 +19,10 @@ function ShopInner() {
   const { t } = useLang();
   const searchParams = useSearchParams();
   const filter = searchParams.get("type") ?? undefined;
-  const shown = filter ? PRODUCTS.filter((p) => p.type === filter) : PRODUCTS;
+  const [custom, setCustom] = useState<Product[]>([]);
+  useEffect(() => setCustom(getCustomProducts()), [filter]);
+  const catalog = [...custom, ...PRODUCTS];
+  const shown = filter ? catalog.filter((p) => p.type === filter) : catalog;
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-24 pt-28 md:px-8">

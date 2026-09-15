@@ -23,12 +23,9 @@ export function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex flex-col items-center">
       <div className="flex items-center gap-2 rounded-b-2xl border border-t-0 border-white/10 bg-black/85 px-3 py-2 shadow-card backdrop-blur-md sm:gap-3 sm:px-4 md:gap-5 md:rounded-b-3xl md:px-6">
-        <Link href="/" className="group flex items-center gap-2">
+        <Link href="/" className="group flex items-center" aria-label="DBYoung — home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={PHOTOS.logo} alt="DBYoung logo" className="h-8 w-8 rounded-full object-cover shadow-fire transition-transform group-hover:scale-110 group-hover:rotate-6" />
-          <span className="font-display text-base font-bold tracking-tight text-white md:text-lg">
-            DB<span className="text-fire-gradient">Young</span>
-          </span>
+          <img src={PHOTOS.logo} alt="DBYoung logo" className="h-9 w-9 rounded-full object-cover shadow-fire transition-transform group-hover:scale-110 group-hover:rotate-6 md:h-10 md:w-10" />
         </Link>
 
         <nav className="hidden items-center gap-3 md:gap-5 lg:flex">

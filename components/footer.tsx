@@ -18,10 +18,7 @@ export function Footer() {
         <div>
           <div className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={PHOTOS.logo} alt="DBYoung logo" className="h-9 w-9 rounded-full object-cover" />
-            <span className="font-display text-lg font-bold text-white">
-              DB<span className="text-fire-gradient">Young</span>
-            </span>
+            <img src={PHOTOS.logo} alt="DBYoung logo" className="h-11 w-11 rounded-full object-cover" />
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">{t.footer.tag}</p>
           <div className="mt-5 flex items-center gap-2">

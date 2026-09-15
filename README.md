@@ -44,7 +44,15 @@ Poi su **Vercel**: New Project → Import `core829digital/dbyoung.it` → aggiun
 (`NEXT_PUBLIC_CONVEX_URL`, `RESEND_API_KEY`, `ADMIN_EMAIL`) → Deploy.
 Domini: `dbyoung.it` (prod) + in futuro `shop.dbyoung.it`, `events.dbyoung.it` (redirect/rewrite alle route `/shop`, `/eventi`).
 
-## TODO prima del go-live (richiedimi questi materiali)
+## Stato implementazione (TODO risolti in codice)
+
+- ✅ Bilingue IT/EN con toggle · ✅ Foto reali · ✅ Logo + favicon · ✅ Artwork prodotti
+- ✅ Cookie banner GDPR + blocco iframe terzi fino al consenso
+- ✅ Form (newsletter/booking/contatti) via AJAX con conferme + copia in inbox admin
+- ✅ Admin funzionante in local-first: statistiche visite/click reali, inbox messaggi, pubblicazione prodotti visibile subito nello shop
+- ✅ Tracking visite/click privacy-friendly (solo conteggi, nessun cookie)
+
+## TODO che richiedono i tuoi input (non fattibili in codice)
 
 1. ~~Link social~~ ✅ fatto (Spotify + embed, Instagram, Facebook, YouTube, TikTok in `lib/utils.ts`)
 2. **Foto/video reali** di Dimitri (hero, pagina artista) — ora Unsplash placeholder

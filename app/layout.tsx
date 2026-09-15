@@ -3,6 +3,8 @@ import "./globals.css";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { Tracker } from "@/components/tracker";
+import { CookieBanner } from "@/components/cookie-banner";
 import { LanguageProvider } from "@/lib/i18n";
 
 export const metadata: Metadata = {
@@ -17,6 +19,7 @@ export const metadata: Metadata = {
     url: "https://dbyoung.it",
     siteName: "DBYoung",
     type: "website",
+    images: [{ url: "/dimitri-potos/DBYOUNG%20LOGO%20trasparent%20webp.webp", width: 1200, height: 1200, alt: "DBYoung logo" }],
   },
 };
 
@@ -26,9 +29,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-obsidian text-bone">
         <LanguageProvider>
           <SmoothScroll />
+          <Tracker />
           <Navbar />
           <main className="min-h-screen">{children}</main>
           <Footer />
+          <CookieBanner />
         </LanguageProvider>
       </body>
     </html>

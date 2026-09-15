@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { ArrowRight, Disc3, CalendarCheck, Flame, Music4, Radio, Star } from "lucide-react";
 import { DBYoungHero } from "@/components/ui/prisma-hero";
 import { Reveal, SectionHeading } from "@/components/reveal";
@@ -8,12 +9,30 @@ import { ProductCard } from "@/components/product-card";
 import { PRODUCTS } from "@/lib/data";
 import { SOCIALS } from "@/lib/utils";
 import { useLang, PHOTOS } from "@/lib/i18n";
+import { pushInbox } from "@/lib/analytics";
 
 const CARD_ICONS = [Music4, Star, CalendarCheck, Disc3];
 
 export default function Home() {
   const { t } = useLang();
   const featured = PRODUCTS.filter((p) => p.featured).slice(0, 3);
+  const [news, setNews] = useState<"idle" | "sending" | "ok" | "err">("idle");
+
+  const subscribe = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const email = String(new FormData(form).get("email") ?? "");
+    setNews("sending");
+    try {
+      const res = await fetch(form.action, { method: "POST", body: new FormData(form) });
+      if (!res.ok) throw new Error();
+      pushInbox({ type: "newsletter", email });
+      form.reset();
+      setNews("ok");
+    } catch {
+      setNews("err");
+    }
+  };
 
   return (
     <>
@@ -114,10 +133,14 @@ export default function Home() {
       <section className="mx-auto max-w-3xl px-4 py-20 text-center md:px-8">
         <SectionHeading kicker={t.home.newsKicker} title={t.home.newsTitle} sub={t.home.newsSub} />
         <Reveal delay={0.1}>
-          <form action="/api/newsletter" method="post" className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
+          <form action="/api/newsletter" method="post" onSubmit={subscribe} className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
             <input required type="email" name="email" placeholder={t.home.newsPlaceholder} className="flex-1 rounded-full border border-white/15 bg-white/5 px-5 py-3.5 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
-            <button className="btn-fire rounded-full px-7 py-3.5 text-sm font-semibold">{t.home.newsButton}</button>
+            <button disabled={news === "sending"} className="btn-fire rounded-full px-7 py-3.5 text-sm font-semibold disabled:opacity-60">
+              {news === "sending" ? t.forms.sending : t.home.newsButton}
+            </button>
           </form>
+          {news === "ok" && <p className="mt-3 text-sm text-fire-ember">{t.forms.okNews}</p>}
+          {news === "err" && <p className="mt-3 text-sm text-red-300">{t.forms.err}</p>}
           <p className="mt-3 text-xs text-white/40">{t.home.newsPrivacy} <Link href="/privacy" className="underline hover:text-fire-hot">{t.home.newsPrivacyLink}</Link>.</p>
         </Reveal>
       </section>

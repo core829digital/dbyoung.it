@@ -10,8 +10,8 @@ export async function POST(req: Request) {
   const city = String(form.get("city") ?? "");
   const message = String(form.get("message") ?? "");
 
-  // TODO: salvare su Convex (bookings) + notifica cron reminder
-  await sendMail({
+  // TODO: salvare su Convex (bookings) + notifica cron reminder — intanto backup in inbox admin via client
+  const sentAdmin = await sendMail({
     to: ADMIN,
     subject: `Nuova richiesta evento — ${name} (${date || "data da definire"})`,
     html: `<p><strong>${name}</strong> (${email}) — ${city} — ${date}</p><p>${message}</p>`,
@@ -22,5 +22,5 @@ export async function POST(req: Request) {
     html: `<p>Ciao ${name}, abbiamo ricevuto la tua richiesta. Ti ricontattiamo entro 24–48h.</p>`,
   });
 
-  return ok({ received: true });
+  return ok({ received: true, mailed: !(sentAdmin as { mocked?: boolean })?.mocked });
 }

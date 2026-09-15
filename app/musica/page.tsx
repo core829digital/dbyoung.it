@@ -2,6 +2,7 @@
 
 import { Disc3, ExternalLink } from "lucide-react";
 import { Reveal, SectionHeading } from "@/components/reveal";
+import { ConsentGate } from "@/components/cookie-banner";
 import { SOCIALS } from "@/lib/utils";
 import { useLang } from "@/lib/i18n";
 
@@ -33,15 +34,17 @@ export default function MusicaPage() {
         ))}
       </div>
       <Reveal className="mt-10 overflow-hidden rounded-[2rem] border border-white/10 bg-obsidian-card">
-        <iframe
-          src={SOCIALS.spotifyEmbed}
-          width="100%"
-          height="420"
-          loading="lazy"
-          title="DBYoung su Spotify"
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-          className="block"
-        />
+        <ConsentGate label="Spotify">
+          <iframe
+            src={SOCIALS.spotifyEmbed}
+            width="100%"
+            height="420"
+            loading="lazy"
+            title="DBYoung su Spotify"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            className="block"
+          />
+        </ConsentGate>
       </Reveal>
     </div>
   );

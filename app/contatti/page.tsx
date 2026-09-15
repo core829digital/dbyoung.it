@@ -1,11 +1,36 @@
 "use client";
 
+import { useState } from "react";
 import { Mail, CalendarCheck } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { useLang } from "@/lib/i18n";
+import { pushInbox } from "@/lib/analytics";
 
 export default function ContattiPage() {
   const { t } = useLang();
+  const [status, setStatus] = useState<"idle" | "sending" | "ok" | "err">("idle");
+
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    setStatus("sending");
+    try {
+      const res = await fetch(form.action, { method: "POST", body: fd });
+      if (!res.ok) throw new Error();
+      pushInbox({
+        type: "contact",
+        name: String(fd.get("name") ?? ""),
+        email: String(fd.get("email") ?? ""),
+        subject: String(fd.get("subject") ?? ""),
+        message: String(fd.get("message") ?? ""),
+      });
+      form.reset();
+      setStatus("ok");
+    } catch {
+      setStatus("err");
+    }
+  };
 
   return (
     <div className="mx-auto max-w-4xl px-4 pb-24 pt-28 md:px-8">
@@ -27,14 +52,18 @@ export default function ContattiPage() {
         </a>
       </Reveal>
       <Reveal delay={0.15} className="mt-6 rounded-[2rem] border border-white/10 bg-obsidian-card p-7">
-        <form action="/api/contact" method="post" className="space-y-3">
+        <form action="/api/contact" method="post" onSubmit={submit} className="space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
             <input required name="name" placeholder={t.contact.name} className="h-11 rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
             <input required type="email" name="email" placeholder={t.contact.email} className="h-11 rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
           </div>
           <input name="subject" placeholder={t.contact.subject} className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
           <textarea required name="message" rows={5} placeholder={t.contact.message} className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
-          <button className="btn-fire w-full rounded-full py-3.5 text-sm font-semibold">{t.contact.submit}</button>
+          <button disabled={status === "sending"} className="btn-fire w-full rounded-full py-3.5 text-sm font-semibold disabled:opacity-60">
+            {status === "sending" ? t.forms.sending : t.contact.submit}
+          </button>
+          {status === "ok" && <p className="text-sm text-fire-ember">{t.forms.okContact}</p>}
+          {status === "err" && <p className="text-sm text-red-300">{t.forms.err}</p>}
         </form>
       </Reveal>
     </div>

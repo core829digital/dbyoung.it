@@ -1,12 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import { CalendarCheck, Mail, Phone, Clock, Instagram, Sparkles } from "lucide-react";
 import { Reveal } from "@/components/reveal";
+import { ConsentGate } from "@/components/cookie-banner";
 import { CALENDLY_URL } from "@/lib/utils";
 import { useLang, PHOTOS, ISOLA } from "@/lib/i18n";
+import { pushInbox } from "@/lib/analytics";
 
 export default function EventiPage() {
   const { t } = useLang();
+  const [status, setStatus] = useState<"idle" | "sending" | "ok" | "err">("idle");
+
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    setStatus("sending");
+    try {
+      const res = await fetch(form.action, { method: "POST", body: fd });
+      if (!res.ok) throw new Error();
+      pushInbox({
+        type: "booking",
+        name: String(fd.get("name") ?? ""),
+        email: String(fd.get("email") ?? ""),
+        day: String(fd.get("date") ?? ""),
+        city: String(fd.get("city") ?? ""),
+        message: String(fd.get("message") ?? ""),
+      });
+      form.reset();
+      setStatus("ok");
+    } catch {
+      setStatus("err");
+    }
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-24 pt-28 md:px-8">
@@ -51,9 +78,12 @@ export default function EventiPage() {
             <CalendarCheck className="h-5 w-5 text-fire" />
             <p className="font-semibold">{t.events.calTitle}</p>
           </div>
-          {/* TODO: sostituire con widget Calendly reale (URL in lib/utils.ts):
+          {/* Widget Calendly reale appena disponibile (URL in lib/utils.ts).
+              Formato embed ufficiale:
               <div className="calendly-inline-widget" data-url={CALENDLY_URL} style={{minWidth:320,height:700}} /> + script embed */}
-          <iframe src={CALENDLY_URL} title={t.events.calTitle} className="h-[640px] w-full bg-white" loading="lazy" />
+          <ConsentGate label="Calendly">
+            <iframe src={CALENDLY_URL} title={t.events.calTitle} className="h-[640px] w-full bg-white" loading="lazy" />
+          </ConsentGate>
         </Reveal>
 
         <div className="flex flex-col gap-5 lg:col-span-2">
@@ -68,7 +98,7 @@ export default function EventiPage() {
 
           <Reveal delay={0.15} className="rounded-[2rem] border border-fire/25 bg-gradient-to-br from-[#200d00] to-obsidian-card p-7">
             <h2 className="font-display text-xl font-semibold">{t.events.formTitle}</h2>
-            <form action="/api/booking" method="post" className="mt-4 space-y-3">
+            <form action="/api/booking" method="post" onSubmit={submit} className="mt-4 space-y-3">
               <input required name="name" placeholder={t.events.name} className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
               <input required type="email" name="email" placeholder={t.events.email} className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
               <div className="grid grid-cols-2 gap-3">
@@ -76,7 +106,11 @@ export default function EventiPage() {
                 <input name="city" placeholder={t.events.city} className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
               </div>
               <textarea required name="message" rows={4} placeholder={t.events.message} className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
-              <button className="btn-fire w-full rounded-full py-3.5 text-sm font-semibold">{t.events.submit}</button>
+              <button disabled={status === "sending"} className="btn-fire w-full rounded-full py-3.5 text-sm font-semibold disabled:opacity-60">
+                {status === "sending" ? t.forms.sending : t.events.submit}
+              </button>
+              {status === "ok" && <p className="text-sm text-fire-ember">{t.forms.okBooking}</p>}
+              {status === "err" && <p className="text-sm text-red-300">{t.forms.err}</p>}
               <p className="text-xs text-white/40">{t.events.privacyNote} <a href="/privacy" className="underline hover:text-fire-hot">{t.events.privacyLink}</a>.</p>
             </form>
           </Reveal>
