@@ -7,6 +7,7 @@ import { Reveal } from "@/components/reveal";
 import { PRODUCTS, type Product } from "@/lib/data";
 import { useLang } from "@/lib/i18n";
 import { getCustomProducts } from "@/lib/analytics";
+import { cloudFetchProducts, convexConfigured } from "@/lib/backend";
 
 const FILTERS = [
   { key: 0, type: undefined as string | undefined },
@@ -20,7 +21,15 @@ function ShopInner() {
   const searchParams = useSearchParams();
   const filter = searchParams.get("type") ?? undefined;
   const [custom, setCustom] = useState<Product[]>([]);
-  useEffect(() => setCustom(getCustomProducts()), [filter]);
+  useEffect(() => {
+    setCustom(getCustomProducts());
+    // Prodotti live da Convex (se il backend ha dati, sostituiscono i locali)
+    if (convexConfigured()) {
+      cloudFetchProducts().then((cloud) => {
+        if (cloud && cloud.length > 0) setCustom(cloud);
+      });
+    }
+  }, [filter]);
   const catalog = [...custom, ...PRODUCTS];
   const shown = filter ? catalog.filter((p) => p.type === filter) : catalog;
 

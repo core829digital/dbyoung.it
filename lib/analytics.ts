@@ -2,6 +2,13 @@
 
 import type { Product } from "@/lib/data";
 import { ARTWORK_PACKS } from "@/lib/data";
+import {
+  cloudTrackView,
+  cloudCreateProduct,
+  cloudCreateBooking,
+  cloudCreateMessage,
+  cloudSubscribeNewsletter,
+} from "./backend";
 
 /**
  * Analytics & inbox LOCAL-FIRST (localStorage).
@@ -40,6 +47,7 @@ export function trackView(path: string) {
   const k = `${path}|${today()}`;
   all[k] = (all[k] ?? 0) + 1;
   write(VIEWS_KEY, all);
+  cloudTrackView(path); // best-effort verso Convex
 }
 
 /* ---------- Click su "Compra" (per prodotto) ---------- */
@@ -101,6 +109,11 @@ export function pushInbox(item: Omit<InboxItem, "id" | "date">) {
   const all = read<InboxItem[]>(INBOX_KEY, []);
   all.unshift({ ...item, id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, date: new Date().toISOString() });
   write(INBOX_KEY, all.slice(0, 500));
+  // Mirror best-effort verso Convex
+  if (item.type === "newsletter") cloudSubscribeNewsletter(item.email);
+  else if (item.type === "booking")
+    cloudCreateBooking({ name: item.name ?? "", email: item.email, date: item.day ?? "", city: item.city, message: item.message ?? "" });
+  else cloudCreateMessage({ name: item.name ?? "", email: item.email, subject: item.subject ?? "", body: item.message ?? "" });
 }
 
 export function getInbox(): InboxItem[] {
@@ -120,6 +133,7 @@ export function addCustomProduct(p: Product) {
   const all = read<Product[]>(CUSTOM_PRODUCTS_KEY, []);
   all.unshift(p);
   write(CUSTOM_PRODUCTS_KEY, all);
+  cloudCreateProduct({ title: p.title, type: p.type, price: p.price, stripeLink: p.stripeLink, description: p.description });
 }
 
 export function removeCustomProduct(id: string) {

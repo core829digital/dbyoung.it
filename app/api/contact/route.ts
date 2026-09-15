@@ -1,4 +1,5 @@
 import { sendMail, ok } from "@/lib/mail";
+import { cloudCreateMessage } from "@/lib/backend";
 
 const ADMIN = process.env.ADMIN_EMAIL ?? "contact.core829@gmail.com";
 
@@ -10,6 +11,7 @@ export async function POST(req: Request) {
   const message = String(form.get("message") ?? "");
 
   // Persistenza su Convex (messages) per inbox /admin alla connessione backend — intanto backup in inbox admin via client
+  cloudCreateMessage({ name, email, subject, body: message });
   const sent = await sendMail({
     to: ADMIN,
     subject: `[dbyoung.it] ${subject} — ${name}`,

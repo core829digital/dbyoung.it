@@ -1,4 +1,5 @@
 import { sendMail, ok } from "@/lib/mail";
+import { cloudSubscribeNewsletter } from "@/lib/backend";
 
 export async function POST(req: Request) {
   const form = await req.formData();
@@ -6,6 +7,7 @@ export async function POST(req: Request) {
   if (!email.includes("@")) return ok({ error: "Email non valida" });
 
   // Persistenza su Convex (newsletter) + doppio opt-in alla connessione backend — intanto backup in inbox admin via client
+  cloudSubscribeNewsletter(email);
   const sent = await sendMail({
     to: email,
     subject: "Benvenuto nel mondo DBYoung 🎺",

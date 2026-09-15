@@ -15,6 +15,7 @@ import {
   type Stats,
   type InboxItem,
 } from "@/lib/analytics";
+import { cloudFetchOverview, convexConfigured, type CloudOverview } from "@/lib/backend";
 
 /**
  * Dashboard admin custom-made (stile Shopify essenziale).
@@ -26,6 +27,7 @@ export default function AdminPage() {
   const [denied, setDenied] = useState(false);
   const [tab, setTab] = useState<"stats" | "prodotti" | "messaggi">("stats");
   const [stats, setStats] = useState<Stats | null>(null);
+  const [cloud, setCloud] = useState<CloudOverview | null>(null);
   const [inbox, setInbox] = useState<InboxItem[]>([]);
   const [custom, setCustom] = useState<Product[]>([]);
   const [notice, setNotice] = useState("");
@@ -41,6 +43,7 @@ export default function AdminPage() {
     setStats(getStats());
     setInbox(getInbox());
     setCustom(getCustomProducts());
+    if (convexConfigured()) cloudFetchOverview().then((o) => o && setCloud(o));
   };
 
   useEffect(() => {
@@ -124,9 +127,9 @@ export default function AdminPage() {
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               ["Visitatori oggi", String(stats.todayViews)],
-              ["Visite totali", String(stats.totalViews)],
+              ["Visite totali", String(cloud?.totalViews ?? stats.totalViews)],
               ["Click su Compra", String(stats.buyClicks)],
-              ["Ricavo (MR)", "€ —"],
+              ["Ordini / Ricavo", cloud ? `${cloud.orders} ordini · €${cloud.revenue}` : "€ —"],
             ].map(([l, v]) => (
               <div key={l} className="rounded-3xl border border-white/10 bg-obsidian-card p-6">
                 <p className="text-xs uppercase tracking-widest text-white/45">{l}</p>

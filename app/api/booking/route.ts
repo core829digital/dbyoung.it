@@ -1,4 +1,5 @@
 import { sendMail, ok } from "@/lib/mail";
+import { cloudCreateBooking } from "@/lib/backend";
 
 const ADMIN = process.env.ADMIN_EMAIL ?? "contact.core829@gmail.com";
 
@@ -11,6 +12,7 @@ export async function POST(req: Request) {
   const message = String(form.get("message") ?? "");
 
   // Persistenza su Convex (bookings) + notifica cron reminder alla connessione backend — intanto backup in inbox admin via client
+  cloudCreateBooking({ name, email, date, city, message });
   const sentAdmin = await sendMail({
     to: ADMIN,
     subject: `Nuova richiesta evento — ${name} (${date || "data da definire"})`,

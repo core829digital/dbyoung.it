@@ -44,7 +44,17 @@ Poi su **Vercel**: New Project → Import `core829digital/dbyoung.it` → aggiun
 (`NEXT_PUBLIC_CONVEX_URL`, `RESEND_API_KEY`, `ADMIN_EMAIL`) → Deploy.
 Domini: `dbyoung.it` (prod) + in futuro `shop.dbyoung.it`, `events.dbyoung.it` (redirect/rewrite alle route `/shop`, `/eventi`).
 
-## Stato implementazione
+## Convex — stato
+
+- ✅ Frontend collegato a `https://festive-ptarmigan-321.convex.cloud` (`.env.local`, `lib/backend.ts`)
+- ✅ Funzioni pronte in `convex/` (prodotti, stats, booking, messaggi, newsletter, chat, cron)
+- ✅ Il sito scrive/legge in dual-write: subito in locale, nel cloud appena le funzioni sono deployate
+- ⏳ **Unico passo manuale**: deploy funzioni (richiede login, una tantum):
+  ```bash
+  npx convex dev
+  ```
+  → login → seleziona il progetto `festive-ptarmigan-321` → lascia girare (sincronizza schema+funzioni).
+  Su Vercel aggiungi la env `NEXT_PUBLIC_CONVEX_URL=https://festive-ptarmigan-321.convex.cloud`.
 
 - ✅ Bilingue IT/EN con toggle · ✅ Foto reali · ✅ Logo + favicon · ✅ Artwork prodotti
 - ✅ Cookie banner GDPR + blocco iframe terzi fino al consenso
