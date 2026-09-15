@@ -17,11 +17,8 @@ export interface Product {
   description: string;
 }
 
-/**
- * Catalogo placeholder — Dimitri potrà gestirlo da /admin
- * (upload beat / sample pack con Stripe Payment Link).
- * Le cover usano Unsplash; sostituire con artwork reali.
- */
+/** Artwork ufficiale per sample pack e composizioni */
+export const ARTWORK_PACKS = "/dimitri-potos/dbyoung-sample-packs-compositions-artwork.png";
 export const PRODUCTS: Product[] = [
   {
     id: "p1",
@@ -76,7 +73,7 @@ export const PRODUCTS: Product[] = [
     type: "sample-pack",
     price: 29,
     oldPrice: 45,
-    cover: "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=800&q=80",
+    cover: ARTWORK_PACKS,
     stripeLink: "#",
     tags: ["120+ samples", "piano", "rhodes", "royalty-free"],
     featured: true,
@@ -89,7 +86,7 @@ export const PRODUCTS: Product[] = [
     title: "Live Drums & Blues Guitars",
     type: "sample-pack",
     price: 25,
-    cover: "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=800&q=80",
+    cover: ARTWORK_PACKS,
     stripeLink: "#",
     tags: ["drums", "guitar", "live"],
     description:

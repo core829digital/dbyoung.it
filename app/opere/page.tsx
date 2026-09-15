@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { FileMusic, FileAudio, Download, Clock } from "lucide-react";
+import { Download, Clock } from "lucide-react";
 import { Reveal } from "@/components/reveal";
-import { WORKS } from "@/lib/data";
+import { WORKS, ARTWORK_PACKS } from "@/lib/data";
 import { useLang } from "@/lib/i18n";
 
 /**
@@ -36,9 +36,8 @@ export default function OperePage() {
             <div className="grid grid-cols-1 gap-2 border-b border-white/5 bg-obsidian-card px-6 py-5 transition-colors last:border-0 hover:bg-obsidian-soft md:grid-cols-12 md:items-center md:gap-4">
               <div className="md:col-span-5">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-fire/15">
-                    {w.kind === "score" ? <FileMusic className="h-4 w-4 text-fire" /> : <FileAudio className="h-4 w-4 text-fire" />}
-                  </span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={ARTWORK_PACKS} alt={w.title[lang]} loading="lazy" className="h-14 w-14 shrink-0 rounded-2xl border border-white/10 object-cover" />
                   <div>
                     <p className="font-display font-semibold text-white">{w.title[lang]}</p>
                     <p className="text-xs text-white/45">{w.description[lang]}</p>
