@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Flame, BarChart3, ShoppingBag, MessageSquare, Upload, LogOut } from "lucide-react";
+import { BarChart3, ShoppingBag, MessageSquare, Upload, LogOut } from "lucide-react";
 import { SUPERADMIN_EMAIL } from "@/lib/utils";
+import { PHOTOS } from "@/lib/i18n";
 import { PRODUCTS } from "@/lib/data";
 
 /**
@@ -42,7 +43,8 @@ export default function AdminPage() {
       <div className="flex min-h-screen items-center justify-center bg-obsidian px-4">
         <form onSubmit={login} className="w-full max-w-sm rounded-[2rem] border border-white/10 bg-obsidian-card p-8">
           <div className="flex items-center gap-2">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-fire to-fire-deep"><Flame className="h-5 w-5 text-white" /></span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={PHOTOS.logo} alt="DBYoung logo" className="h-10 w-10 rounded-full object-cover" />
             <div><p className="font-display font-bold">DBYoung Admin</p><p className="text-xs text-white/50">dbyoung.it/admin</p></div>
           </div>
           <label className="mt-6 block text-sm text-white/60">Email superadmin</label>
@@ -60,7 +62,8 @@ export default function AdminPage() {
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-fire to-fire-deep"><Flame className="h-5 w-5 text-white" /></span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={PHOTOS.logo} alt="DBYoung logo" className="h-10 w-10 rounded-full object-cover" />
             <div><p className="font-display font-bold">DBYoung Admin</p><p className="text-xs text-white/50">{SUPERADMIN_EMAIL}</p></div>
           </div>
           <button onClick={() => setAuthed(false)} className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-fire/50 hover:text-white"><LogOut className="h-4 w-4" /> Esci</button>

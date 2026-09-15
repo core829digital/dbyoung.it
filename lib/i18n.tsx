@@ -7,6 +7,7 @@ export type Lang = "it" | "en";
 /* Foto reali di Dimitri (public/dimitri-potos) */
 const P = "/dimitri-potos/ChatGPT%20Image%2028%20ago%202026,";
 export const PHOTOS = {
+  logo: "/dimitri-potos/DBYOUNG%20LOGO.webp",
   heroProfile: `${P}%2017_03_29.png`,
   homeArtist: `${P}%2016_32_34.png`,
   artistPortrait: `${P}%2017_28_57.png`,

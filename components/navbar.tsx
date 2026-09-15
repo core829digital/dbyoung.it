@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flame, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { NAV, type NavKey } from "@/lib/data";
 import { cn } from "@/lib/utils";
-import { useLang, LangToggle } from "@/lib/i18n";
+import { useLang, LangToggle, PHOTOS } from "@/lib/i18n";
 
 /**
  * Header stile Prisma: pill centrata, incollata alla parte superiore,
@@ -24,9 +24,8 @@ export function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50 flex flex-col items-center">
       <div className="flex items-center gap-2 rounded-b-2xl border border-t-0 border-white/10 bg-black/85 px-3 py-2 shadow-card backdrop-blur-md sm:gap-3 sm:px-4 md:gap-5 md:rounded-b-3xl md:px-6">
         <Link href="/" className="group flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-fire to-fire-deep shadow-fire transition-transform group-hover:scale-110 group-hover:rotate-6">
-            <Flame className="h-3.5 w-3.5 text-white" />
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={PHOTOS.logo} alt="DBYoung logo" className="h-8 w-8 rounded-full object-cover shadow-fire transition-transform group-hover:scale-110 group-hover:rotate-6" />
           <span className="font-display text-base font-bold tracking-tight text-white md:text-lg">
             DB<span className="text-fire-gradient">Young</span>
           </span>

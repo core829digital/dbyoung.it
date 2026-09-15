@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Flame, Instagram, Facebook, Youtube, Music2 } from "lucide-react";
+import { Instagram, Facebook, Youtube, Music2 } from "lucide-react";
 import { SOCIALS } from "@/lib/utils";
-import { useLang, LangToggle } from "@/lib/i18n";
+import { useLang, LangToggle, PHOTOS } from "@/lib/i18n";
 
 const EXPLORE_HREFS = ["/artista", "/musica", "/opere", "/shop", "/eventi", "/contatti"];
 const SHOP_LINKS = ["/shop?type=beat", "/shop?type=sample-pack", "/shop?type=offerta", "/termini#licenze"];
@@ -17,9 +17,8 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4 md:px-8">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-fire to-fire-deep">
-              <Flame className="h-4 w-4 text-white" />
-            </span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={PHOTOS.logo} alt="DBYoung logo" className="h-9 w-9 rounded-full object-cover" />
             <span className="font-display text-lg font-bold text-white">
               DB<span className="text-fire-gradient">Young</span>
             </span>
