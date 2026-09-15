@@ -123,7 +123,7 @@ export type NavKey = (typeof NAV)[number]["key"];
 /**
  * Opere / composizioni (curriculum).
  * file: URL in /public/opere/... oppure "#" se in arrivo.
- * TODO Dimitri: invia spartiti/audio reali da pubblicare qui.
+ * Per pubblicare spartiti/audio reali, caricarli in /public/opere/ e aggiornare il campo file.
  */
 export interface Work {
   id: string;

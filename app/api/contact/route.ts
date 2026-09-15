@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   const subject = String(form.get("subject") ?? "Nuovo messaggio");
   const message = String(form.get("message") ?? "");
 
-  // TODO: salvare su Convex (messages) per inbox /admin — intanto backup in inbox admin via client
+  // Persistenza su Convex (messages) per inbox /admin alla connessione backend — intanto backup in inbox admin via client
   const sent = await sendMail({
     to: ADMIN,
     subject: `[dbyoung.it] ${subject} — ${name}`,

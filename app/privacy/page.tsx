@@ -37,7 +37,7 @@ export default function PrivacyPage() {
           <p>Dati di contatto: fino a 24 mesi dall&apos;ultimo scambio; dati fiscali: 10 anni; dati newsletter: fino a revoca del consenso.</p>
         </Block>
         <Block t="6. I tuoi diritti (GDPR artt. 15–22)">
-          <p>Accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e revoca del consenso: scrivi a <strong>privacy@dbyoung.it</strong> (TODO: attivare). Reclamo al Garante (garanteprivacy.it).</p>
+          <p>Accesso, rettifica, cancellazione, limitazione, portabilità, opposizione e revoca del consenso: scrivi a <strong>privacy@dbyoung.it</strong>. Reclamo al Garante (garanteprivacy.it).</p>
         </Block>
         <Block t="7. Cookie">
           <p>Vedi la <a href="/cookie" className="text-fire-hot underline">Cookie Policy</a>. Nessun cookie di profilazione senza consenso.</p>

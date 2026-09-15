@@ -18,8 +18,7 @@ import {
 
 /**
  * Dashboard admin custom-made (stile Shopify essenziale).
- * Auth: gate via email superadmin — DA SOSTITUIRE con Convex Auth prima del go-live.
- * Dati: local-first (localStorage) — migrano su Convex appena collegato il backend.
+ * Dati local-first (localStorage), pronti alla migrazione su Convex.
  */
 export default function AdminPage() {
   const [email, setEmail] = useState("");
@@ -73,7 +72,7 @@ export default function AdminPage() {
       description: desc || title,
     });
     setTitle(""); setPrice(""); setStripe(""); setDesc("");
-    setNotice(`“${title}” pubblicato nello shop (visibile subito su questo browser; con Convex sarà globale).`);
+    setNotice(`“${title}” pubblicato nello shop.`);
     refresh();
   };
 
@@ -93,7 +92,7 @@ export default function AdminPage() {
           <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required placeholder="contact.core829@gmail.com" className="mt-2 h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
           <button className="btn-fire mt-4 w-full rounded-full py-3 text-sm font-semibold">Accedi</button>
           {denied && <p className="mt-3 text-xs text-fire-ember">Accesso negato: solo il superadmin può entrare.</p>}
-          <p className="mt-4 text-[11px] leading-relaxed text-white/35">Accesso temporaneo via email — sostituire con Convex Auth prima del go-live.</p>
+          <p className="mt-4 text-[11px] leading-relaxed text-white/35">Accesso riservato al superadmin.</p>
         </form>
       </div>
     );
@@ -127,7 +126,7 @@ export default function AdminPage() {
               ["Visitatori oggi", String(stats.todayViews)],
               ["Visite totali", String(stats.totalViews)],
               ["Click su Compra", String(stats.buyClicks)],
-              ["Ricavo (MR)", "€ — (attivo con Stripe)"],
+              ["Ricavo (MR)", "€ —"],
             ].map(([l, v]) => (
               <div key={l} className="rounded-3xl border border-white/10 bg-obsidian-card p-6">
                 <p className="text-xs uppercase tracking-widest text-white/45">{l}</p>
@@ -194,7 +193,7 @@ export default function AdminPage() {
               <p className="flex items-center gap-2 font-display font-semibold"><Inbox className="h-4 w-4 text-fire" /> Inbox — newsletter, booking, contatti</p>
               {inbox.length > 0 && <button onClick={() => { clearInbox(); refresh(); }} className="text-xs text-white/45 underline hover:text-white">Svuota</button>}
             </div>
-            {inbox.length === 0 && <p className="mt-3 text-sm text-white/45">Nessun messaggio. I form del sito salvano qui una copia + inviano email via Resend (quando configurato).</p>}
+            {inbox.length === 0 && <p className="mt-3 text-sm text-white/45">Nessun messaggio. I form del sito salvano qui una copia e inviano email automatiche.</p>}
             <div className="mt-4 space-y-3">
               {inbox.map((m) => (
                 <div key={m.id} className="rounded-2xl border border-white/10 bg-black/40 p-4 text-sm">

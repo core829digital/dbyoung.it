@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   const email = String(form.get("email") ?? "");
   if (!email.includes("@")) return ok({ error: "Email non valida" });
 
-  // TODO: salvare su Convex (newsletter) + doppio opt-in — intanto backup in inbox admin via client
+  // Persistenza su Convex (newsletter) + doppio opt-in alla connessione backend — intanto backup in inbox admin via client
   const sent = await sendMail({
     to: email,
     subject: "Benvenuto nel mondo DBYoung 🎺",

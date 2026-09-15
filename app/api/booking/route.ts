@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   const city = String(form.get("city") ?? "");
   const message = String(form.get("message") ?? "");
 
-  // TODO: salvare su Convex (bookings) + notifica cron reminder — intanto backup in inbox admin via client
+  // Persistenza su Convex (bookings) + notifica cron reminder alla connessione backend — intanto backup in inbox admin via client
   const sentAdmin = await sendMail({
     to: ADMIN,
     subject: `Nuova richiesta evento — ${name} (${date || "data da definire"})`,

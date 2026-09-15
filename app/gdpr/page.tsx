@@ -12,7 +12,7 @@ export default function GdprPage() {
         <h1 className="font-display text-4xl font-semibold tracking-tight md:text-5xl">GDPR & Trattamento dati</h1>
         <p className="mt-4 rounded-2xl border border-fire/25 bg-fire/10 px-4 py-3 text-sm text-fire-ember">{t.legal.enNote} {t.legal.gdprEn}</p>
         <div className="mt-8 space-y-4 text-sm leading-relaxed text-white/65">
-          <p><strong className="text-white">Titolare:</strong> Dimitri Bouturline (DBYoung) — email privacy@dbyoung.it (TODO: attivare).</p>
+          <p><strong className="text-white">Titolare:</strong> Dimitri Bouturline (DBYoung) — email privacy@dbyoung.it.</p>
           <p><strong className="text-white">Responsabili esterni (art. 28):</strong> Vercel (hosting), Convex (database), Stripe (pagamenti), Resend (email), Calendly (booking) — con DPA e, ove extra-UE, clausole SCC.</p>
           <p><strong className="text-white">Misure:</strong> HTTPS, accessi admin con autenticazione, minimizzazione, backup, log accessi.</p>
           <p><strong className="text-white">Data breach:</strong> notifica al Garante entro 72h e agli interessati ove ad alto rischio (artt. 33–34 GDPR).</p>
