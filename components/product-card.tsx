@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import { Play, ShoppingCart, BadgePercent } from "lucide-react";
 import type { Product } from "@/lib/data";
+import { useLang } from "@/lib/i18n";
 
 export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
+  const { t } = useLang();
   const discount = p.oldPrice ? Math.round((1 - p.price / p.oldPrice) * 100) : 0;
   return (
     <motion.article
@@ -24,9 +26,9 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
           </span>
         )}
         <span className="absolute right-3 top-3 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] uppercase tracking-wider text-white/80 backdrop-blur">
-          {p.type === "beat" ? "Beat" : p.type === "sample-pack" ? "Sample Pack" : "Offerta"}
+          {t.shop.types[p.type] ?? p.type}
         </span>
-        <button aria-label={`Ascolta ${p.title}`} className="absolute bottom-3 right-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-black transition-all hover:scale-110 hover:bg-fire hover:text-white">
+        <button aria-label={`${t.shop.listen}: ${p.title}`} className="absolute bottom-3 right-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-black transition-all hover:scale-110 hover:bg-fire hover:text-white">
           <Play className="ml-0.5 h-5 w-5 fill-current" />
         </button>
         {(p.bpm || p.key) && (
@@ -40,8 +42,8 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
         <h3 className="font-display text-lg font-semibold text-white transition-colors group-hover:text-fire-ember">{p.title}</h3>
         <p className="mt-1.5 line-clamp-2 text-sm text-white/55">{p.description}</p>
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {p.tags.map((t) => (
-            <span key={t} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] text-white/60">{t}</span>
+          {p.tags.map((tag) => (
+            <span key={tag} className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[11px] text-white/60">{tag}</span>
           ))}
         </div>
         <div className="mt-4 flex items-center justify-between">
@@ -50,7 +52,7 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
             {p.oldPrice && <span className="text-sm text-white/40 line-through">€{p.oldPrice}</span>}
           </div>
           <a href={p.stripeLink} target={p.stripeLink === "#" ? undefined : "_blank"} rel="noreferrer" className="btn-fire flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold">
-            <ShoppingCart className="h-4 w-4" /> Compra
+            <ShoppingCart className="h-4 w-4" /> {t.shop.buy}
           </a>
         </div>
       </div>

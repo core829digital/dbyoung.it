@@ -112,10 +112,85 @@ export const PRODUCTS: Product[] = [
 ];
 
 export const NAV = [
-  { label: "Home", href: "/" },
-  { label: "Chi è DBYoung", href: "/artista" },
-  { label: "Musica", href: "/musica" },
-  { label: "Shop", href: "/shop" },
-  { label: "Eventi", href: "/eventi" },
-  { label: "Contatti", href: "/contatti" },
+  { key: "home", href: "/" },
+  { key: "artist", href: "/artista" },
+  { key: "music", href: "/musica" },
+  { key: "works", href: "/opere" },
+  { key: "shop", href: "/shop" },
+  { key: "events", href: "/eventi" },
+  { key: "contact", href: "/contatti" },
+] as const;
+
+export type NavKey = (typeof NAV)[number]["key"];
+
+/**
+ * Opere / composizioni (curriculum).
+ * file: URL in /public/opere/... oppure "#" se in arrivo.
+ * TODO Dimitri: invia spartiti/audio reali da pubblicare qui.
+ */
+export interface Work {
+  id: string;
+  title: { it: string; en: string };
+  genre: { it: string; en: string };
+  year: string;
+  kind: "score" | "audio";
+  file: string;
+  description: { it: string; en: string };
+}
+
+export const WORKS: Work[] = [
+  {
+    id: "w1",
+    title: { it: "Notturno per archi in Re minore", en: "Nocturne for Strings in D minor" },
+    genre: { it: "Classica", en: "Classical" },
+    year: "2024",
+    kind: "score",
+    file: "#",
+    description: { it: "Composizione originale per quartetto d'archi.", en: "Original composition for string quartet." },
+  },
+  {
+    id: "w2",
+    title: { it: "Suite Moderna n.1 — Ossidiana", en: "Modern Suite No.1 — Obsidian" },
+    genre: { it: "Moderna", en: "Modern" },
+    year: "2024",
+    kind: "audio",
+    file: "#",
+    description: { it: "Suite per piano, elettronica e fiati.", en: "Suite for piano, electronics and horns." },
+  },
+  {
+    id: "w3",
+    title: { it: "Blues per la 52ª Strada", en: "Blues for 52nd Street" },
+    genre: { it: "Blues", en: "Blues" },
+    year: "2023",
+    kind: "audio",
+    file: "#",
+    description: { it: "Big-band moderna con sezione fiati live.", en: "Modern big-band with live horn section." },
+  },
+  {
+    id: "w4",
+    title: { it: "Preludio Jazz in Sol minore", en: "Jazz Prelude in G minor" },
+    genre: { it: "Jazz", en: "Jazz" },
+    year: "2023",
+    kind: "score",
+    file: "#",
+    description: { it: "Preludio per piano solo, stile stride moderno.", en: "Solo piano prelude, modern stride style." },
+  },
+  {
+    id: "w5",
+    title: { it: "Fattoria Isola — Tema ufficiale eventi", en: "Fattoria Isola — Official Events Theme" },
+    genre: { it: "Moderna / Eventi", en: "Modern / Events" },
+    year: "2025",
+    kind: "audio",
+    file: "#",
+    description: { it: "Tema composto per i format di Isola Events.", en: "Theme composed for the Isola Events formats." },
+  },
+  {
+    id: "w6",
+    title: { it: "Adagio per pianoforte e violoncello", en: "Adagio for Piano and Cello" },
+    genre: { it: "Classica", en: "Classical" },
+    year: "2025",
+    kind: "score",
+    file: "#",
+    description: { it: "Duo lirico per piano e violoncello.", en: "Lyrical duo for piano and cello." },
+  },
 ];

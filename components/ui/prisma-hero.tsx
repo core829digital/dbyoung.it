@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useRef } from "react";
+import { useLang, PHOTOS } from "@/lib/i18n";
 
 /* ---------------- WordsPullUp ---------------- */
 interface WordsPullUpProps {
@@ -84,10 +85,12 @@ export const WordsPullUpMultiStyle = ({ segments, className = "", style }: Words
 
 /* ---------------- DBYoung Hero ---------------- */
 export const DBYoungHero = () => {
+  const { t } = useLang();
+
   return (
     <section className="h-[100svh] w-full px-2 pt-2 md:px-3 md:pt-3">
       <div className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-[2rem]">
-        {/* Background: video se disponibile, altrimenti immagine Unsplash */}
+        {/* Background video */}
         <video
           autoPlay
           loop
@@ -118,7 +121,7 @@ export const DBYoungHero = () => {
                 className="mb-2 inline-flex items-center gap-2 rounded-full border border-fire/40 bg-black/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-fire-ember backdrop-blur md:text-xs"
               >
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-fire" />
-                Jazz · Blues · Classica
+                {t.hero.badge}
               </motion.p>
               <h1
                 className="font-display font-medium leading-[0.85] tracking-[-0.07em] text-[19vw] sm:text-[17vw] md:text-[15vw] lg:text-[12vw] xl:text-[11vw]"
@@ -126,9 +129,27 @@ export const DBYoungHero = () => {
               >
                 <WordsPullUp text="DBYoung" showAsterisk />
               </h1>
-              <p className="mt-1 font-display text-[6vw] font-light tracking-tight text-fire-gradient sm:text-[5vw] md:text-[3.5vw] lg:text-[2.6vw]">
-                Dimitri Bouturline
-              </p>
+              <div className="mt-3 flex items-center gap-4">
+                {/* Foto profilo artista — stile Spotify, blending con lo sfondo */}
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative shrink-0"
+                >
+                  <div className="absolute -inset-2 rounded-full bg-fire/30 blur-xl" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={PHOTOS.heroProfile}
+                    alt="Dimitri Bouturline — DBYoung"
+                    className="relative h-20 w-20 rounded-full border-2 border-fire/70 object-cover shadow-fire sm:h-24 sm:w-24 md:h-28 md:w-28"
+                  />
+                  <span className="absolute bottom-1 right-1 h-4 w-4 rounded-full border-2 border-black bg-fire" />
+                </motion.div>
+                <p className="font-display text-[6vw] font-light tracking-tight text-fire-gradient sm:text-[5vw] md:text-[3.5vw] lg:text-[2.6vw]">
+                  {t.hero.name}
+                </p>
+              </div>
             </div>
 
             <div className="col-span-12 flex flex-col gap-5 pb-6 lg:col-span-4 lg:pb-10">
@@ -139,9 +160,7 @@ export const DBYoungHero = () => {
                 className="text-xs text-white/70 sm:text-sm md:text-base"
                 style={{ lineHeight: 1.4 }}
               >
-                Compositore a 360°: jazz, blues e musica classica con un tono moderno, attivo ed
-                energetico — strumenti veri ed eventi organizzati che muovono club
-                e festival. Compra beat, sample pack o affidagli il tuo evento.
+                {t.hero.desc}
               </motion.p>
 
               <div className="flex flex-wrap gap-3">
@@ -152,7 +171,7 @@ export const DBYoungHero = () => {
                   href="/shop"
                   className="btn-fire group inline-flex items-center gap-2 self-start rounded-full py-1 pl-5 pr-1 text-sm font-medium sm:text-base"
                 >
-                  Compra i Beat
+                  {t.hero.ctaShop}
                   <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
                     <ArrowRight className="h-4 w-4 text-fire-ember" />
                   </span>
@@ -164,7 +183,7 @@ export const DBYoungHero = () => {
                   href="/eventi"
                   className="inline-flex items-center gap-2 self-start rounded-full border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-medium text-white backdrop-blur transition-all hover:border-fire/60 hover:bg-fire/10 hover:text-fire-ember sm:text-base"
                 >
-                  Organizza il tuo Evento
+                  {t.hero.ctaEvent}
                 </motion.a>
               </div>
             </div>

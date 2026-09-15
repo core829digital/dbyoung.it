@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Flame, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { NAV } from "@/lib/data";
+import { NAV, type NavKey } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { useLang, LangToggle } from "@/lib/i18n";
 
 /**
  * Header stile Prisma: pill centrata, incollata alla parte superiore,
@@ -14,11 +15,14 @@ import { cn } from "@/lib/utils";
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { t } = useLang();
   if (pathname?.startsWith("/admin")) return null;
+
+  const label = (key: NavKey) => t.nav[key];
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex flex-col items-center">
-      <div className="flex items-center gap-2 rounded-b-2xl border border-t-0 border-white/10 bg-black/85 px-3 py-2 shadow-card backdrop-blur-md sm:gap-4 sm:px-5 md:gap-7 md:rounded-b-3xl md:px-7">
+      <div className="flex items-center gap-2 rounded-b-2xl border border-t-0 border-white/10 bg-black/85 px-3 py-2 shadow-card backdrop-blur-md sm:gap-3 sm:px-4 md:gap-5 md:rounded-b-3xl md:px-6">
         <Link href="/" className="group flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-fire to-fire-deep shadow-fire transition-transform group-hover:scale-110 group-hover:rotate-6">
             <Flame className="h-3.5 w-3.5 text-white" />
@@ -28,29 +32,29 @@ export function Navbar() {
           </span>
         </Link>
 
-        <span className="hidden h-5 w-px bg-white/15 sm:block" />
-
-        <nav className="hidden items-center gap-4 md:gap-7 lg:flex">
-          {NAV.filter((n) => n.href !== "/").map((n) => (
+        <nav className="hidden items-center gap-3 md:gap-5 lg:flex">
+          {NAV.filter((n) => n.key !== "home").map((n) => (
             <Link
               key={n.href}
               href={n.href}
               className={cn(
-                "link-fire text-[10px] transition-colors sm:text-xs md:text-sm",
-                pathname === n.href ? "text-fire-hot" : "text-white/70 hover:text-white"
+                "link-fire text-xs transition-colors xl:text-sm",
+                pathname === n.href ? "text-fire-hot" : "hover:text-white"
               )}
               style={pathname === n.href ? undefined : { color: "rgba(255,255,255,0.8)" }}
             >
-              {n.label}
+              {label(n.key)}
             </Link>
           ))}
         </nav>
+
+        <LangToggle compact />
 
         <Link
           href="/shop"
           className="btn-fire hidden rounded-full px-4 py-1.5 text-xs font-semibold sm:block md:text-sm"
         >
-          Shop
+          {t.nav.shopCta}
         </Link>
 
         <button
@@ -77,7 +81,7 @@ export function Navbar() {
                     : "text-white/80 hover:bg-fire/10 hover:text-fire-ember"
                 )}
               >
-                {n.label}
+                {label(n.key)}
               </Link>
             ))}
             <Link
@@ -85,7 +89,7 @@ export function Navbar() {
               onClick={() => setOpen(false)}
               className="btn-fire mt-2 rounded-full px-5 py-3 text-center font-semibold"
             >
-              Vai allo Shop
+              {t.nav.toShop}
             </Link>
           </div>
         </nav>
