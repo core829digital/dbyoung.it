@@ -23,11 +23,15 @@ function ShopInner() {
   const filter = searchParams.get("type") ?? undefined;
   const [custom, setCustom] = useState<Product[]>([]);
   useEffect(() => {
-    setCustom(getCustomProducts());
-    // Prodotti live da Convex (se il backend ha dati, sostituiscono i locali)
+    const local = getCustomProducts();
+    setCustom(local);
+    // Prodotti live da Convex (se il backend ha dati, sostituiscono i locali).
+    // Filtro anti-spazzatura: solo slug del catalogo ufficiale o pubblicati da /admin.
     if (convexConfigured()) {
+      const known = new Set([...PRODUCTS, ...local].map((p) => p.slug));
       cloudFetchProducts().then((cloud) => {
-        if (cloud && cloud.length > 0) setCustom(cloud);
+        const clean = (cloud ?? []).filter((p) => known.has(p.slug));
+        if (clean.length > 0) setCustom(clean);
       });
     }
   }, [filter]);
