@@ -8,6 +8,8 @@ import {
   cloudCreateBooking,
   cloudCreateMessage,
   cloudSubscribeNewsletter,
+  cloudCreateLicense,
+  cloudRevokeLicense,
 } from "./backend";
 
 /**
@@ -20,6 +22,7 @@ const VIEWS_KEY = "dby-views-v1";
 const CLICKS_KEY = "dby-clicks-v1";
 const INBOX_KEY = "dby-inbox-v1";
 const CUSTOM_PRODUCTS_KEY = "dby-custom-products-v1";
+const LICENSES_KEY = "dby-licenses-v1";
 
 function read<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -133,7 +136,7 @@ export function addCustomProduct(p: Product) {
   const all = read<Product[]>(CUSTOM_PRODUCTS_KEY, []);
   all.unshift(p);
   write(CUSTOM_PRODUCTS_KEY, all);
-  cloudCreateProduct({ title: p.title, type: p.type, price: p.price, stripeLink: p.stripeLink, description: p.description });
+  cloudCreateProduct({ title: p.title, type: p.type, price: p.price, stripeLink: p.stripeLink, description: p.description, filePath: p.file || undefined });
 }
 
 export function removeCustomProduct(id: string) {
@@ -145,4 +148,57 @@ export function removeCustomProduct(id: string) {
 
 export function customProductCover(): string {
   return ARTWORK_PACKS;
+}
+
+/* ---------- Licenze download (prodotti acquistati) ---------- */
+export interface License {
+  code: string;
+  productSlug: string;
+  email: string;
+  date: string;
+  active: boolean;
+}
+
+export function generateLicenseCode(): string {
+  const bytes = new Uint8Array(4);
+  crypto.getRandomValues(bytes);
+  const part = (n: number) =>
+    Array.from(bytes.slice(n, n + 2))
+      .map((b) => b.toString(36).toUpperCase().replace(/[^A-Z0-9]/g, "X"))
+      .join("")
+      .padEnd(4, "X")
+      .slice(0, 4);
+  return `DBY-${part(0)}-${part(2)}`;
+}
+
+export function getLicenses(): License[] {
+  return read<License[]>(LICENSES_KEY, []);
+}
+
+export function issueLicense(productSlug: string, email: string): License {
+  const lic: License = {
+    code: generateLicenseCode(),
+    productSlug,
+    email,
+    date: new Date().toISOString(),
+    active: true,
+  };
+  const all = read<License[]>(LICENSES_KEY, []);
+  all.unshift(lic);
+  write(LICENSES_KEY, all);
+  cloudCreateLicense({ code: lic.code, productSlug, email });
+  return lic;
+}
+
+export function revokeLocalLicense(code: string) {
+  write(
+    LICENSES_KEY,
+    read<License[]>(LICENSES_KEY, []).map((l) => (l.code === code ? { ...l, active: false } : l))
+  );
+  cloudRevokeLicense(code);
+}
+
+export function findLocalLicense(code: string): License | null {
+  const c = code.trim().toUpperCase();
+  return read<License[]>(LICENSES_KEY, []).find((l) => l.code === c && l.active) ?? null;
 }

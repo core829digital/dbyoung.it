@@ -13,7 +13,8 @@ const FILTERS = [
   { key: 0, type: undefined as string | undefined },
   { key: 1, type: "beat" },
   { key: 2, type: "sample-pack" },
-  { key: 3, type: "offerta" },
+  { key: 3, type: "soundtrack" },
+  { key: 4, type: "offerta" },
 ];
 
 function ShopInner() {

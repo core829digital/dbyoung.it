@@ -44,6 +44,17 @@ Poi su **Vercel**: New Project → Import `core829digital/dbyoung.it` → aggiun
 (`NEXT_PUBLIC_CONVEX_URL`, `RESEND_API_KEY`, `ADMIN_EMAIL`) → Deploy.
 Domini: `dbyoung.it` (prod) + in futuro `shop.dbyoung.it`, `events.dbyoung.it` (redirect/rewrite alle route `/shop`, `/eventi`).
 
+## Audio, shop & licenze (file reali)
+
+- Catalogo 100% reale in `lib/data.ts`: 2 beat, 4 sample pack, 3 colonne sonore (su licenza)
+- Anteprime pubbliche in `public/audio/previews/` (mp3 30–45s, generate con ffmpeg)
+- Originali in `private_audio/` (**mai** nel repo né deployati, mai esposti via URL)
+- Download solo con licenza: `POST /api/download/[slug]?license=DBY-XXXX-XXXX`
+  - verifica su Convex (`licenses`), throttle anti-abuso, ZIP al volo per i pack, header no-store
+- Clienti: pagina `/libreria` (verifica codice → download) · Admin: tab Licenze (emetti/revoca)
+- Prezzi di lancio da confermare: beat €39/€49 · pack €29–€39 · colonne sonore su misura
+- Con Stripe: Payment Link per prodotto + webhook che emette licenze in automatico (stesso flusso, zero cambi UI)
+
 ## Convex — stato
 
 - ✅ Frontend collegato a `https://festive-ptarmigan-321.convex.cloud` (`.env.local`, `lib/backend.ts`)

@@ -17,6 +17,8 @@ export default defineSchema({
     featured: v.boolean(),
     description: v.string(),
     active: v.boolean(),
+    /** Percorso file privato per /api/download (solo admin/webhook) */
+    filePath: v.optional(v.string()),
   }).index("by_slug", ["slug"]),
 
   orders: defineTable({
@@ -57,4 +59,12 @@ export default defineSchema({
     day: v.string(), // YYYY-MM-DD
     count: v.number(),
   }).index("by_path_day", ["path", "day"]),
+
+  licenses: defineTable({
+    code: v.string(), // es. DBY-XXXX-XXXX
+    productSlug: v.string(),
+    email: v.string(),
+    active: v.boolean(),
+    createdAt: v.string(),
+  }).index("by_code", ["code"]),
 });

@@ -69,6 +69,7 @@ interface CloudProduct {
   tags: string[];
   featured?: boolean;
   description: string;
+  filePath?: string;
 }
 
 function mapProduct(d: CloudProduct): Product {
@@ -86,7 +87,17 @@ function mapProduct(d: CloudProduct): Product {
     tags: d.tags ?? [],
     featured: d.featured,
     description: d.description,
+    descriptionEn: d.description,
+    preview: "",
+    // file privato risolto dal backend via slug (mai esposto al client)
+    file: "",
   };
+}
+
+async function cloudFetchProductFile(slug: string): Promise<string | null> {
+  const docs = await callQuery<CloudProduct[]>(api.products.list as never, {});
+  const found = docs?.find((d) => d.slug === slug);
+  return found?.filePath ?? null;
 }
 
 export async function cloudFetchProducts(): Promise<Product[] | null> {
@@ -100,6 +111,7 @@ export function cloudCreateProduct(p: {
   price: number;
   stripeLink: string;
   description: string;
+  filePath?: string;
 }) {
   void callMutation(api.products.create as never, { ...p });
 }
@@ -121,6 +133,24 @@ export function cloudCreateMessage(m: { name: string; email: string; subject: st
 
 export function cloudSubscribeNewsletter(email: string) {
   void callMutation(api.newsletter.subscribe as never, { email });
+}
+
+/* ---------- Licenze download ---------- */
+export interface CloudLicense {
+  productSlug: string;
+  email: string;
+}
+
+export async function cloudVerifyLicense(code: string): Promise<CloudLicense | null> {
+  return callQuery<CloudLicense>(api.licenses.getByCode as never, { code: code.trim().toUpperCase() });
+}
+
+export function cloudCreateLicense(l: { code: string; productSlug: string; email: string }) {
+  void callMutation(api.licenses.create as never, { ...l });
+}
+
+export function cloudRevokeLicense(code: string) {
+  void callMutation(api.licenses.revoke as never, { code });
 }
 
 /* ---------- Overview statistiche ---------- */

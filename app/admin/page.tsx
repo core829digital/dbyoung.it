@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart3, ShoppingBag, MessageSquare, Upload, LogOut, Trash2, Inbox } from "lucide-react";
+import { BarChart3, ShoppingBag, MessageSquare, Upload, LogOut, Trash2, Inbox, KeyRound } from "lucide-react";
 import { SUPERADMIN_EMAIL } from "@/lib/utils";
 import { PHOTOS } from "@/lib/i18n";
 import { PRODUCTS, ARTWORK_PACKS, type Product, type ProductType } from "@/lib/data";
@@ -12,8 +12,12 @@ import {
   getCustomProducts,
   addCustomProduct,
   removeCustomProduct,
+  getLicenses,
+  issueLicense,
+  revokeLocalLicense,
   type Stats,
   type InboxItem,
+  type License,
 } from "@/lib/analytics";
 import { cloudFetchOverview, convexConfigured, type CloudOverview } from "@/lib/backend";
 
@@ -25,11 +29,14 @@ export default function AdminPage() {
   const [email, setEmail] = useState("");
   const [authed, setAuthed] = useState(false);
   const [denied, setDenied] = useState(false);
-  const [tab, setTab] = useState<"stats" | "prodotti" | "messaggi">("stats");
+  const [tab, setTab] = useState<"stats" | "prodotti" | "licenze" | "messaggi">("stats");
   const [stats, setStats] = useState<Stats | null>(null);
   const [cloud, setCloud] = useState<CloudOverview | null>(null);
   const [inbox, setInbox] = useState<InboxItem[]>([]);
   const [custom, setCustom] = useState<Product[]>([]);
+  const [licenses, setLicenses] = useState<License[]>([]);
+  const [licSlug, setLicSlug] = useState(PRODUCTS[0].slug);
+  const [licEmail, setLicEmail] = useState("");
   const [notice, setNotice] = useState("");
 
   // Form nuovo prodotto
@@ -38,11 +45,13 @@ export default function AdminPage() {
   const [price, setPrice] = useState("");
   const [stripe, setStripe] = useState("");
   const [desc, setDesc] = useState("");
+  const [filePath, setFilePath] = useState("");
 
   const refresh = () => {
     setStats(getStats());
     setInbox(getInbox());
     setCustom(getCustomProducts());
+    setLicenses(getLicenses());
     if (convexConfigured()) cloudFetchOverview().then((o) => o && setCloud(o));
   };
 
@@ -70,11 +79,14 @@ export default function AdminPage() {
       type,
       price: Number(price),
       cover: ARTWORK_PACKS,
+      preview: "",
+      file: filePath,
       stripeLink: stripe,
       tags: [type],
       description: desc || title,
+      descriptionEn: desc || title,
     });
-    setTitle(""); setPrice(""); setStripe(""); setDesc("");
+    setTitle(""); setPrice(""); setStripe(""); setDesc(""); setFilePath("");
     setNotice(`“${title}” pubblicato nello shop.`);
     refresh();
   };
@@ -114,7 +126,7 @@ export default function AdminPage() {
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
-          {([["stats", "Statistiche", BarChart3], ["prodotti", "Prodotti", ShoppingBag], ["messaggi", `Messaggi (${inbox.length})`, MessageSquare]] as const).map(([k, l, Icon]) => (
+          {([["stats", "Statistiche", BarChart3], ["prodotti", "Prodotti", ShoppingBag], ["licenze", `Licenze (${licenses.filter((l) => l.active).length})`, KeyRound], ["messaggi", `Messaggi (${inbox.length})`, MessageSquare]] as const).map(([k, l, Icon]) => (
             <button key={k} onClick={() => setTab(k)} className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all ${tab === k ? "bg-fire text-white shadow-fire" : "border border-white/15 text-white/65 hover:border-fire/50"}`}>
               <Icon className="h-4 w-4" /> {l}
             </button>
@@ -170,6 +182,7 @@ export default function AdminPage() {
                   </select>
                 </div>
                 <input value={stripe} onChange={(e) => setStripe(e.target.value)} required placeholder="Stripe Payment Link (https://buy.stripe.com/…)" className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
+                <input value={filePath} onChange={(e) => setFilePath(e.target.value)} placeholder="Percorso file privato (es. BEATS/beat.wav) — per download" className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
                 <textarea value={desc} onChange={(e) => setDesc(e.target.value)} rows={2} placeholder="Descrizione breve" className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
                 <button className="btn-fire w-full rounded-full py-3 text-sm font-semibold">Pubblica nello Shop</button>
               </div>
@@ -184,6 +197,48 @@ export default function AdminPage() {
               {PRODUCTS.map((p) => (
                 <div key={p.id} className="flex items-center justify-between rounded-2xl border border-white/10 bg-obsidian-card px-4 py-3 opacity-70">
                   <div><p className="text-sm font-semibold">{p.title}</p><p className="text-xs text-white/45">€{p.price} · {p.type} · catalogo base</p></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {tab === "licenze" && (
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!licEmail.includes("@")) return;
+                const lic = issueLicense(licSlug, licEmail);
+                setLicEmail("");
+                setNotice(`Licenza ${lic.code} emessa per ${licEmail || lic.email} — comunicala al cliente: scarica da /libreria.`);
+                refresh();
+              }}
+              className="h-fit rounded-3xl border border-fire/25 bg-obsidian-card p-6"
+            >
+              <p className="flex items-center gap-2 font-display font-semibold"><KeyRound className="h-4 w-4 text-fire" /> Emetti licenza download</p>
+              <div className="mt-4 space-y-3">
+                <select value={licSlug} onChange={(e) => setLicSlug(e.target.value)} className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white focus:border-fire/60 focus:outline-none">
+                  {[...PRODUCTS, ...custom].map((p) => (
+                    <option key={p.id} value={p.slug}>{p.title}</option>
+                  ))}
+                </select>
+                <input value={licEmail} onChange={(e) => setLicEmail(e.target.value)} required type="email" placeholder="Email cliente" className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
+                <button className="btn-fire w-full rounded-full py-3 text-sm font-semibold">Genera codice</button>
+                <p className="text-[11px] text-white/40">Con Stripe attivo, i codici si generano da soli a ogni ordine (webhook).</p>
+              </div>
+            </form>
+            <div className="space-y-3">
+              {licenses.length === 0 && <p className="text-sm text-white/45">Nessuna licenza emessa.</p>}
+              {licenses.map((l) => (
+                <div key={l.code} className={`flex items-center justify-between rounded-2xl border px-4 py-3 ${l.active ? "border-white/10 bg-obsidian-card" : "border-white/5 bg-black/40 opacity-50"}`}>
+                  <div>
+                    <p className="font-mono text-sm font-bold text-fire-ember">{l.code}</p>
+                    <p className="text-xs text-white/45">{l.productSlug} · {l.email}</p>
+                  </div>
+                  {l.active && (
+                    <button onClick={() => { revokeLocalLicense(l.code); refresh(); }} className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-red-300 hover:border-red-400/50">Revoca</button>
+                  )}
                 </div>
               ))}
             </div>

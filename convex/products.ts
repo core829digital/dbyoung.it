@@ -13,6 +13,7 @@ export const create = mutation({
     price: v.number(),
     stripeLink: v.string(),
     description: v.string(),
+    filePath: v.optional(v.string()),
   },
   handler: async (ctx, a) => {
     const slug = a.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");

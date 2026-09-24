@@ -8,7 +8,9 @@ dist/
 .env
 .env*.local
 
-# os / editor
+# audio originali (mai nel repo: solo anteprime leggere in public/audio)
+private_audio/
+*.DS_Store
 .DS_Store
 Thumbs.db
 .vscode/*

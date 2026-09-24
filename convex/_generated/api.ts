@@ -31,6 +31,11 @@ export const api = {
   newsletter: {
     subscribe: m("newsletter:subscribe"),
   },
+  licenses: {
+    create: m("licenses:create"),
+    getByCode: q("licenses:getByCode"),
+    revoke: m("licenses:revoke"),
+  },
 };
 
 export const internal = {
