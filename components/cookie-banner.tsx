@@ -50,7 +50,7 @@ export function CookieBanner() {
   };
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-[60] sm:right-auto sm:max-w-md">
+    <div className="fixed bottom-4 left-4 right-4 z-[60] sm:right-auto sm:max-w-md" role="dialog" aria-modal="true" aria-label="Informativa cookie">
       <div className="rounded-3xl border border-white/15 bg-black/90 p-5 shadow-card backdrop-blur-xl">
         <p className="flex items-center gap-2 font-display font-semibold text-white">
           <Cookie className="h-4 w-4 text-fire" /> Cookie

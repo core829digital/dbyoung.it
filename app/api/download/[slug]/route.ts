@@ -62,12 +62,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
   let stat;
   try {
     stat = await fsp.stat(target);
-  } catch {
+  } catch (e) {
+    const code = (e as NodeJS.ErrnoException)?.code;
     // Su hosting senza i file (es. Vercel): il fulfillment avverrà dallo storage dedicato
-    return NextResponse.json(
-      { error: "Download non disponibile su questo nodo — contatta info@dbyoung.it con il tuo codice licenza." },
-      { status: 410 }
-    );
+    if (code === "ENOENT") {
+      return NextResponse.json(
+        { error: "Download non disponibile su questo nodo — contatta info@dbyoung.it con il tuo codice licenza." },
+        { status: 410 }
+      );
+    }
+    return NextResponse.json({ error: "Errore interno del download." }, { status: 500 });
   }
 
   const headers = new Headers({

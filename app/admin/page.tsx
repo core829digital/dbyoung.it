@@ -71,23 +71,33 @@ export default function AdminPage() {
 
   const publish = (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanTitle = title.trim();
+    const priceNum = Number(price);
+    if (cleanTitle.length < 2) {
+      setNotice("Titolo non valido: minimo 2 caratteri.");
+      return;
+    }
+    if (!Number.isFinite(priceNum) || priceNum < 0 || priceNum > 100000) {
+      setNotice("Prezzo non valido.");
+      return;
+    }
     const id = `custom-${Date.now()}`;
     addCustomProduct({
       id,
-      slug: `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${Date.now().toString(36)}`,
-      title,
+      slug: `${cleanTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}-${Date.now().toString(36)}`,
+      title: cleanTitle,
       type,
-      price: Number(price),
+      price: priceNum,
       cover: ARTWORK_PACKS,
       preview: "",
       file: filePath,
       stripeLink: stripe,
       tags: [type],
-      description: desc || title,
-      descriptionEn: desc || title,
+      description: desc.trim() || cleanTitle,
+      descriptionEn: desc.trim() || cleanTitle,
     });
     setTitle(""); setPrice(""); setStripe(""); setDesc(""); setFilePath("");
-    setNotice(`“${title}” pubblicato nello shop.`);
+    setNotice(`“${cleanTitle}” pubblicato nello shop.`);
     refresh();
   };
 
@@ -178,7 +188,7 @@ export default function AdminPage() {
                 <div className="grid grid-cols-2 gap-3">
                   <input value={price} onChange={(e) => setPrice(e.target.value)} required inputMode="decimal" placeholder="Prezzo €" className="h-11 rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
                   <select value={type} onChange={(e) => setType(e.target.value as ProductType)} className="h-11 rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white focus:border-fire/60 focus:outline-none">
-                    <option value="beat">Beat</option><option value="sample-pack">Sample Pack</option><option value="offerta">Offerta</option>
+                    <option value="beat">Beat</option><option value="sample-pack">Sample Pack</option><option value="soundtrack">Colonna sonora</option><option value="offerta">Offerta</option>
                   </select>
                 </div>
                 <input value={stripe} onChange={(e) => setStripe(e.target.value)} required placeholder="Stripe Payment Link (https://buy.stripe.com/…)" className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />

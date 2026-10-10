@@ -18,3 +18,10 @@ Thumbs.db
 
 # vercel
 .vercel
+
+# logs / coverage / build info
+*.log
+npm-debug.log*
+coverage/
+.turbo/
+*.tsbuildinfo

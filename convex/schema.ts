@@ -5,7 +5,12 @@ export default defineSchema({
   products: defineTable({
     title: v.string(),
     slug: v.string(),
-    type: v.union(v.literal("beat"), v.literal("sample-pack"), v.literal("offerta")),
+    type: v.union(
+      v.literal("beat"),
+      v.literal("sample-pack"),
+      v.literal("soundtrack"),
+      v.literal("offerta")
+    ),
     price: v.number(),
     oldPrice: v.optional(v.number()),
     bpm: v.optional(v.number()),

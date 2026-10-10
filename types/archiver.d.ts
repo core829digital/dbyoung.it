@@ -9,8 +9,4 @@ declare module "archiver" {
   export class ZipArchive extends Archiver {
     constructor(options?: { zlib?: { level?: number } });
   }
-
-  export class TarArchive extends Archiver {
-    constructor(options?: Record<string, unknown>);
-  }
 }

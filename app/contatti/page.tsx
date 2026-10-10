@@ -54,16 +54,30 @@ export default function ContattiPage() {
       <Reveal delay={0.15} className="mt-6 rounded-[2rem] border border-white/10 bg-obsidian-card p-7">
         <form action="/api/contact" method="post" onSubmit={submit} className="space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
-            <input required name="name" placeholder={t.contact.name} className="h-11 rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
-            <input required type="email" name="email" placeholder={t.contact.email} className="h-11 rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
+            <div>
+              <label htmlFor="contact-name" className="mb-1 block text-xs text-white/60">Nome</label>
+              <input id="contact-name" required name="name" autoComplete="name" maxLength={100} placeholder={t.contact.name} className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
+            </div>
+            <div>
+              <label htmlFor="contact-email" className="mb-1 block text-xs text-white/60">Email</label>
+              <input id="contact-email" required type="email" name="email" autoComplete="email" maxLength={254} placeholder={t.contact.email} className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
+            </div>
           </div>
-          <input name="subject" placeholder={t.contact.subject} className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
-          <textarea required name="message" rows={5} placeholder={t.contact.message} className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
+          <div>
+            <label htmlFor="contact-subject" className="mb-1 block text-xs text-white/60">Oggetto</label>
+            <input id="contact-subject" name="subject" maxLength={150} placeholder={t.contact.subject} className="h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
+          </div>
+          <div>
+            <label htmlFor="contact-message" className="mb-1 block text-xs text-white/60">Messaggio</label>
+            <textarea id="contact-message" required name="message" rows={5} maxLength={5000} placeholder={t.contact.message} className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
+          </div>
           <button disabled={status === "sending"} className="btn-fire w-full rounded-full py-3.5 text-sm font-semibold disabled:opacity-60">
             {status === "sending" ? t.forms.sending : t.contact.submit}
           </button>
-          {status === "ok" && <p className="text-sm text-fire-ember">{t.forms.okContact}</p>}
-          {status === "err" && <p className="text-sm text-red-300">{t.forms.err}</p>}
+          <div aria-live="polite">
+            {status === "ok" && <p className="text-sm text-fire-ember">{t.forms.okContact}</p>}
+            {status === "err" && <p className="text-sm text-red-300">{t.forms.err}</p>}
+          </div>
         </form>
       </Reveal>
     </div>

@@ -12,7 +12,10 @@ const a = (name: string) => makeFunctionReference<"action">(name);
 export const api = {
   products: {
     list: q("products:list"),
+    listAdmin: q("products:listAdmin"),
     create: m("products:create"),
+    setActive: m("products:setActive"),
+    remove: m("products:remove"),
   },
   stats: {
     track: m("stats:track"),
@@ -24,12 +27,15 @@ export const api = {
   },
   bookings: {
     create: m("bookings:create"),
+    list: q("bookings:list"),
   },
   messages: {
     create: m("messages:create"),
+    list: q("messages:list"),
   },
   newsletter: {
     subscribe: m("newsletter:subscribe"),
+    list: q("newsletter:list"),
   },
   licenses: {
     create: m("licenses:create"),
