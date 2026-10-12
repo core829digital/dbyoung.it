@@ -75,7 +75,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-2xl border border-white/10 bg-black/60 px-4 py-3 backdrop-blur">
                 <div className="flex items-center gap-2 text-sm text-white/80"><Flame className="h-4 w-4 text-fire" /> {t.home.artistBadge}</div>
-                <Link href="/eventi" className="text-sm font-semibold text-fire-hot hover:text-fire-ember">{t.home.artistBadgeLink}</Link>
+                <Link href="https://events.dbyoung.it" className="text-sm font-semibold text-fire-hot hover:text-fire-ember">{t.home.artistBadgeLink}</Link>
               </div>
             </div>
           </Reveal>
@@ -104,7 +104,7 @@ export default function Home() {
             <h2 className="font-display text-3xl font-semibold tracking-tight md:text-5xl">{t.home.eventsTitleA} <span className="text-fire-gradient">{t.home.eventsTitleB}</span></h2>
             <p className="mt-4 leading-relaxed text-white/60">{t.home.eventsText}</p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/eventi" className="btn-fire inline-flex items-center gap-2 rounded-full px-7 py-3.5 font-semibold">
+              <Link href="https://events.dbyoung.it" className="btn-fire inline-flex items-center gap-2 rounded-full px-7 py-3.5 font-semibold">
                 <CalendarCheck className="h-4 w-4" /> {t.home.eventsCta}
               </Link>
               <a href={SOCIALS.spotify} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm text-white/85 transition-all hover:border-fire/60 hover:text-fire-ember">

@@ -67,7 +67,7 @@ function ShopInner() {
       <Reveal className="mt-14 rounded-[2rem] border border-fire/25 bg-gradient-to-br from-[#200d00] to-obsidian-card p-8 text-center md:p-12">
         <h2 className="font-display text-2xl font-semibold md:text-4xl">{t.shop.customTitleA} <span className="text-fire-gradient">{t.shop.customTitleB}</span></h2>
         <p className="mx-auto mt-3 max-w-xl text-sm text-white/60 md:text-base">{t.shop.customText}</p>
-        <a href="/eventi" className="btn-fire mt-6 inline-flex rounded-full px-8 py-3.5 font-semibold">{t.shop.customCta}</a>
+        <a href="https://events.dbyoung.it" className="btn-fire mt-6 inline-flex rounded-full px-8 py-3.5 font-semibold">{t.shop.customCta}</a>
       </Reveal>
     </div>
   );

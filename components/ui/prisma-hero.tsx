@@ -186,7 +186,7 @@ export const DBYoungHero = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.8, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                  href="/eventi"
+                  href="https://events.dbyoung.it"
                   className="inline-flex items-center gap-2 self-start rounded-full border border-white/25 bg-white/5 px-5 py-2.5 text-sm font-medium text-white backdrop-blur transition-all hover:border-fire/60 hover:bg-fire/10 hover:text-fire-ember sm:text-base"
                 >
                   {t.hero.ctaEvent}

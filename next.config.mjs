@@ -9,6 +9,20 @@ const nextConfig = {
     ],
     formats: ["image/avif", "image/webp"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/eventi",
+        destination: "https://events.dbyoung.it",
+        permanent: true,
+      },
+      {
+        source: "/eventi/:path*",
+        destination: "https://events.dbyoung.it/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

@@ -22,7 +22,7 @@ export default function ArtistaPage() {
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href="/shop" className="btn-fire inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold">{t.artist.ctaShop} <ArrowRight className="h-4 w-4" /></Link>
             <Link href="/opere" className="inline-flex items-center gap-2 rounded-full border border-fire/40 bg-fire/10 px-6 py-3 text-sm text-fire-ember transition-all hover:bg-fire/20">{t.artist.ctaWorks}</Link>
-            <Link href="/eventi" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm text-white/85 transition-all hover:border-fire/60 hover:text-fire-ember">{t.artist.ctaCollab}</Link>
+            <Link href="https://events.dbyoung.it" className="inline-flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm text-white/85 transition-all hover:border-fire/60 hover:text-fire-ember">{t.artist.ctaCollab}</Link>
           </div>
         </Reveal>
         <Reveal delay={0.15}>

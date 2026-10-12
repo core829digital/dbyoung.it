@@ -5,7 +5,7 @@ import { Instagram, Facebook, Youtube, Music2 } from "lucide-react";
 import { SOCIALS } from "@/lib/utils";
 import { useLang, LangToggle, PHOTOS } from "@/lib/i18n";
 
-const EXPLORE_HREFS = ["/artista", "/musica", "/opere", "/shop", "/eventi", "/contatti"];
+const EXPLORE_HREFS = ["/artista", "/musica", "/opere", "/shop", "https://events.dbyoung.it", "/contatti"];
 const SHOP_LINKS = ["/shop?type=beat", "/shop?type=sample-pack", "/shop?type=soundtrack", "/shop?type=offerta", "/libreria", "/termini#licenze"];
 const LEGAL_HREFS = ["/privacy", "/termini", "/cookie", "/gdpr"];
 

@@ -181,7 +181,7 @@ export const NAV = [
   { key: "music", href: "/musica" },
   { key: "works", href: "/opere" },
   { key: "shop", href: "/shop" },
-  { key: "events", href: "/eventi" },
+  { key: "events", href: "https://events.dbyoung.it" },
   { key: "contact", href: "/contatti" },
 ] as const;
 

@@ -40,7 +40,7 @@ export default function ContattiPage() {
         <p className="mt-4 text-white/60">{t.contact.sub}</p>
       </Reveal>
       <Reveal delay={0.1} className="mt-10 grid gap-4 sm:grid-cols-2">
-        <a href="/eventi" className="card-hover rounded-3xl border border-fire/30 bg-gradient-to-br from-[#200d00] to-obsidian-card p-7">
+        <a href="https://events.dbyoung.it" className="card-hover rounded-3xl border border-fire/30 bg-gradient-to-br from-[#200d00] to-obsidian-card p-7">
           <CalendarCheck className="h-6 w-6 text-fire" />
           <p className="mt-3 font-display text-lg font-semibold">{t.contact.card1T}</p>
           <p className="mt-1 text-sm text-white/55">{t.contact.card1D}</p>
