@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { KeyRound, Download, ShieldCheck, XCircle } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { useLang, PHOTOS } from "@/lib/i18n";
@@ -14,11 +15,32 @@ interface Verified {
   preview: string;
 }
 
+interface Owned {
+  code: string;
+  slug: string;
+  title: string;
+  type: string;
+  cover: string;
+  preview: string;
+  active: boolean;
+  createdAt: string;
+}
+
 export default function LibreriaPage() {
   const { t } = useLang();
   const [code, setCode] = useState("");
   const [status, setStatus] = useState<"idle" | "checking" | "ok" | "err">("idle");
   const [product, setProduct] = useState<Verified | null>(null);
+  const [owned, setOwned] = useState<Owned[] | null>(null);
+
+  useEffect(() => {
+    fetch("/api/account/licenses")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.licenses) setOwned(d.licenses);
+      })
+      .catch(() => undefined);
+  }, []);
 
   const verify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +70,35 @@ export default function LibreriaPage() {
         <p className="mt-4 leading-relaxed text-white/60">{t.library.sub}</p>
       </Reveal>
 
+      {owned && owned.length > 0 && (
+        <Reveal delay={0.05} className="mt-10">
+          <p className="mb-3 flex items-center gap-2 font-display font-semibold text-white">
+            <ShieldCheck className="h-4 w-4 text-fire" /> I tuoi acquisti
+          </p>
+          <div className="space-y-3">
+            {owned.map((o) => (
+              <div key={o.code} className="flex flex-col items-center gap-4 rounded-3xl border border-fire/25 bg-black/50 p-5 sm:flex-row">
+                <Image src={o.cover} alt={o.title} width={160} height={160} className="h-20 w-20 rounded-2xl border border-white/10 object-cover" />
+                <div className="flex-1 text-center sm:text-left">
+                  <p className="font-display font-semibold text-white">{o.title}</p>
+                  <p className="font-mono text-xs text-fire-ember">{o.code}</p>
+                </div>
+                {o.active ? (
+                  <a
+                    href={`/api/download/${o.slug}?license=${encodeURIComponent(o.code)}`}
+                    className="btn-fire flex shrink-0 items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold"
+                  >
+                    <Download className="h-4 w-4" /> {t.library.download}
+                  </a>
+                ) : (
+                  <span className="text-xs text-white/40">Revocata</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </Reveal>
+      )}
+
       <Reveal delay={0.1} className="mt-10 rounded-[2rem] border border-white/10 bg-obsidian-card p-7 md:p-10">
         <form onSubmit={verify} className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
@@ -73,8 +124,7 @@ export default function LibreriaPage() {
         {status === "ok" && product && (
           <div className="mt-6 overflow-hidden rounded-3xl border border-fire/30 bg-black/50">
             <div className="flex flex-col items-center gap-5 p-6 sm:flex-row">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={product.cover} alt={product.title} className="h-28 w-28 rounded-2xl border border-white/10 object-cover" />
+              <Image src={product.cover} alt={product.title} width={224} height={224} className="h-28 w-28 rounded-2xl border border-white/10 object-cover" />
               <div className="flex-1 text-center sm:text-left">
                 <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-widest text-fire-ember sm:justify-start">
                   <ShieldCheck className="h-3.5 w-3.5" /> {t.library.yourFile}
@@ -97,8 +147,7 @@ export default function LibreriaPage() {
       </Reveal>
 
       <Reveal delay={0.15} className="mt-6 text-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={PHOTOS.logo} alt="DBYoung" className="mx-auto h-12 w-12 rounded-full object-cover opacity-70" />
+        <Image src={PHOTOS.logo} alt="DBYoung" width={96} height={96} className="mx-auto h-12 w-12 rounded-full object-cover opacity-70" />
         <p className="mt-3 text-sm text-white/45">
           <Link href="/shop" className="underline hover:text-fire-hot">Shop</Link>
         </p>

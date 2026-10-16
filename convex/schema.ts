@@ -31,8 +31,16 @@ export default defineSchema({
     email: v.string(),
     amount: v.number(),
     stripeSessionId: v.optional(v.string()),
+    stripeEventId: v.optional(v.string()),
+    userId: v.optional(v.id("users")),
     status: v.string(),
-  }),
+  }).index("by_user", ["userId"]),
+
+  stripeEvents: defineTable({
+    eventId: v.string(),
+    type: v.string(),
+    createdAt: v.string(),
+  }).index("by_event", ["eventId"]),
 
   bookings: defineTable({
     name: v.string(),
@@ -51,12 +59,6 @@ export default defineSchema({
     read: v.boolean(),
   }),
 
-  chatMessages: defineTable({
-    sessionId: v.string(),
-    from: v.union(v.literal("visitor"), v.literal("admin")),
-    text: v.string(),
-  }).index("by_session", ["sessionId"]),
-
   newsletter: defineTable({ email: v.string(), confirmed: v.boolean() }).index("by_email", ["email"]),
 
   pageViews: defineTable({
@@ -69,7 +71,54 @@ export default defineSchema({
     code: v.string(), // es. DBY-XXXX-XXXX
     productSlug: v.string(),
     email: v.string(),
+    userId: v.optional(v.id("users")),
+    stripeSessionId: v.optional(v.string()),
     active: v.boolean(),
     createdAt: v.string(),
-  }).index("by_code", ["code"]),
+  })
+    .index("by_code", ["code"])
+    .index("by_session", ["stripeSessionId"]),
+
+  /* ---------- Auth portale clienti (solo via API Next server-side) ---------- */
+  users: defineTable({
+    email: v.string(), // lowercase
+    emailVerified: v.boolean(),
+    passwordHash: v.object({ salt: v.string(), hash: v.string(), iter: v.number() }),
+    role: v.union(v.literal("admin"), v.literal("user")),
+    totpEnabled: v.boolean(),
+    totpSecretEnc: v.optional(v.string()),
+    backupCodesHash: v.array(v.string()),
+    createdAt: v.string(),
+    lastLoginAt: v.optional(v.string()),
+  }).index("by_email", ["email"]),
+
+  sessions: defineTable({
+    tokenHash: v.string(),
+    userId: v.id("users"),
+    expiresAt: v.number(),
+    createdAt: v.number(),
+    ip: v.optional(v.string()),
+    ua: v.optional(v.string()),
+  }).index("by_token", ["tokenHash"]),
+
+  passwordResets: defineTable({
+    tokenHash: v.string(),
+    userId: v.id("users"),
+    expiresAt: v.number(),
+    used: v.boolean(),
+  }).index("by_token", ["tokenHash"]),
+
+  emailOtps: defineTable({
+    email: v.string(),
+    codeHash: v.string(),
+    purpose: v.union(v.literal("verify"), v.literal("reset")),
+    expiresAt: v.number(),
+    attempts: v.number(),
+  }).index("by_email", ["email"]),
+
+  totpChallenges: defineTable({
+    tokenHash: v.string(),
+    userId: v.id("users"),
+    expiresAt: v.number(),
+  }).index("by_token", ["tokenHash"]),
 });

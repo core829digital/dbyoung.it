@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { WORKS, ARTWORK_PACKS } from "@/lib/data";
@@ -25,8 +26,7 @@ export default function OperePage() {
           <Reveal key={w.id} delay={Math.min(i * 0.07, 0.3)}>
             <div className="card-hover flex h-full flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-obsidian-card">
               <div className="flex items-center gap-4 p-5">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={ARTWORK_PACKS} alt={w.title[lang]} loading="lazy" className="h-16 w-16 shrink-0 rounded-2xl border border-white/10 object-cover" />
+                <Image src={ARTWORK_PACKS} alt={w.title[lang]} width={128} height={128} className="h-16 w-16 shrink-0 rounded-2xl border border-white/10 object-cover" />
                 <div className="min-w-0">
                   <p className="truncate font-display text-lg font-semibold text-white">{w.title[lang]}</p>
                   <p className="mt-0.5 text-xs text-white/50">

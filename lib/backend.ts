@@ -4,11 +4,11 @@ import type { Product, ProductType } from "@/lib/data";
 import { ARTWORK_PACKS } from "@/lib/data";
 
 /**
- * Ponte verso Convex via HTTP client (niente provider/hooks reattivi:
- * funziona anche prima del deploy funzioni e non rompe mai la build).
- * Tutte le chiamate sono best-effort: se il backend non risponde,
- * il sito continua con i dati local-first di lib/analytics.ts.
- * Progetto: festive-ptarmigan-321
+ * Ponte verso Convex via HTTP client — SOLO chiamate pubbliche
+ * (tracking aggregato, lista prodotti, verifica licenze).
+ * Nessun import node:crypto qui: questo modulo gira anche nel browser.
+ * Le operazioni privilegiate passano da /api/admin/* e /api/auth/*
+ * (firma HMAC server-side, vedi lib/serverConvex.ts).
  */
 
 let client: ConvexHttpClient | null = null;
@@ -49,12 +49,12 @@ async function callMutation(fn: unknown, args: Record<string, unknown>): Promise
 
 const day = () => new Date().toISOString().slice(0, 10);
 
-/* ---------- Tracking visite ---------- */
+/* ---------- Tracking visite (pubblico: solo contatori) ---------- */
 export function cloudTrackView(path: string) {
-  void callMutation(api.stats.track as never, { path, day: day() });
+  void callMutation(api.stats.track as never, { path: path.slice(0, 120), day: day() });
 }
 
-/* ---------- Prodotti ---------- */
+/* ---------- Prodotti pubblici ---------- */
 interface CloudProduct {
   _id: string;
   title: string;
@@ -94,72 +94,19 @@ function mapProduct(d: CloudProduct): Product {
   };
 }
 
-async function cloudFetchProductFile(slug: string): Promise<string | null> {
-  const docs = await callQuery<CloudProduct[]>(api.products.list as never, {});
-  const found = docs?.find((d) => d.slug === slug);
-  return found?.filePath ?? null;
-}
-
 export async function cloudFetchProducts(): Promise<Product[] | null> {
   const docs = await callQuery<CloudProduct[]>(api.products.list as never, {});
   return docs ? docs.map(mapProduct) : null;
 }
 
-export function cloudCreateProduct(p: {
-  title: string;
-  type: ProductType;
-  price: number;
-  stripeLink: string;
-  description: string;
-  filePath?: string;
-}) {
-  void callMutation(api.products.create as never, { ...p });
-}
-
-/* ---------- Inbox: booking / messaggi / newsletter ---------- */
-export function cloudCreateBooking(b: {
-  name: string;
-  email: string;
-  date: string;
-  city?: string;
-  message: string;
-}) {
-  void callMutation(api.bookings.create as never, { ...b });
-}
-
-export function cloudCreateMessage(m: { name: string; email: string; subject: string; body: string }) {
-  void callMutation(api.messages.create as never, { ...m });
-}
-
-export function cloudSubscribeNewsletter(email: string) {
-  void callMutation(api.newsletter.subscribe as never, { email });
-}
-
-/* ---------- Licenze download ---------- */
+/* ---------- Licenze download (verifica pubblica: ritorna solo slug+email) ---------- */
 export interface CloudLicense {
   productSlug: string;
   email: string;
 }
 
 export async function cloudVerifyLicense(code: string): Promise<CloudLicense | null> {
-  return callQuery<CloudLicense>(api.licenses.getByCode as never, { code: code.trim().toUpperCase() });
-}
-
-export function cloudCreateLicense(l: { code: string; productSlug: string; email: string }) {
-  void callMutation(api.licenses.create as never, { ...l });
-}
-
-export function cloudRevokeLicense(code: string) {
-  void callMutation(api.licenses.revoke as never, { code });
-}
-
-/* ---------- Overview statistiche ---------- */
-export interface CloudOverview {
-  totalViews: number;
-  orders: number;
-  revenue: number;
-}
-
-export async function cloudFetchOverview(): Promise<CloudOverview | null> {
-  return callQuery<CloudOverview>(api.stats.overview as never, {});
+  const clean = code.trim().toUpperCase().slice(0, 20);
+  if (!/^DBY-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(clean)) return null;
+  return callQuery<CloudLicense>(api.licenses.getByCode as never, { code: clean });
 }

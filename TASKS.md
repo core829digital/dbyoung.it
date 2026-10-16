@@ -1,7 +1,17 @@
 # Task List — dbyoung.it (roadmap Stripe + lancio)
 
-Legenda: `[ ]` da fare · `[~]` in corso · `[x]` fatto.
-Ultimo aggiornamento: 2026-10-14.
+Legenda: `[ ]` da fare · `[~]` in corso · `[x]` fatto in codice.
+Ultimo aggiornamento: 2026-10-16.
+
+## Stato implementazione (2026-10-16)
+
+Verificato con `vitest` (25 test verdi), `tsc --noEmit` pulito e `next build` verde (45/45 pagine).
+**Fatto in codice:** task 1–6 completi, task 7 completo tranne Stripe Tax (si attiva in dashboard), immagini WebP + `next/image`, legali aggiornate.
+**Resta all'operatore (richiede servizi live, non automatizzabile qui):**
+`npx convex dev` + deploy + env Convex (`ADMIN_ACTION_SECRET`, `TOTP_ENCRYPTION_KEY`, `ADMIN_EMAILS`);
+chiavi Stripe live/test + Price ID per prodotto + webhook registrato + `stripe trigger` end-to-end;
+chiavi Turnstile + `RESEND_*`/`ADMIN_*` su Vercel + redeploy; DNS `events.dbyoung.it`;
+creazione primo admin (register con email in `ADMIN_EMAILS`); dry-run staging completo.
 
 ## Stato attuale (verificato sul codice)
 
@@ -12,7 +22,7 @@ Ultimo aggiornamento: 2026-10-14.
 
 ---
 
-## 1. Webhook Stripe con verifica di firma (event-driven) `[ ]`
+## 1. Webhook Stripe con verifica di firma (event-driven) `[x]`
 
 Principio: **mai fidarsi di callback client** (es. parametri in `success_url` che un hacker può forgiare).
 Solo gli eventi firmati da Stripe conferiscono diritti (licenze/ordini).
@@ -27,7 +37,7 @@ Solo gli eventi firmati da Stripe conferiscono diritti (licenze/ordini).
 - [ ] Registrare l'endpoint webhook nella dashboard Stripe (URL produzione) e testare con `stripe trigger`
 - Criterio di accettazione: ordine conferito **solo** da evento firmato; replay/forgery test falliscono senza effetti
 
-## 2. Allowlist IP da configurazione + azioni Convex firmate `[ ]`
+## 2. Allowlist IP da configurazione + azioni Convex firmate `[x]`
 
 Principio: IP consentiti **solo in configurazione** (env, mai hardcoded); le azioni privilegiate Convex richiedono **sempre** autorizzazione firmata dal server.
 Nota tecnica onesta: le function Convex **non vedono l'IP del client**, quindi l'allowlist va applicata nel layer Next.js (middleware/API) usando gli header del proxy fidato, e le mutation privilegiate devono esigere un token HMAC firmato dal server.
@@ -40,7 +50,7 @@ Nota tecnica onesta: le function Convex **non vedono l'IP del client**, quindi l
 - [ ] Test: mutation senza firma / firma scaduta / firma manomessa → sempre rifiutate
 - Criterio di accettazione: chiamate Convex dirette (bypassando il sito) non possono eseguire azioni admin
 
-## 3. Input validation su tutto il sito `[ ]`
+## 3. Input validation su tutto il sito `[x]`
 
 - [ ] Aggiungere `zod`; creare `lib/validation.ts` con schemi condivisi client+server (contact, booking, newsletter, license-verify, prodotto admin, carrello, checkout, auth)
 - [ ] Applicare gli schemi in **tutte** le API route (oggi solo 3 route hanno controlli manuali) + form client (messaggi d'errore localizzati IT/EN)
@@ -49,7 +59,7 @@ Nota tecnica onesta: le function Convex **non vedono l'IP del client**, quindi l
 - [ ] Test Vitest per ogni schema (validi, limite, maligni)
 - Criterio di accettazione: nessun input fuori schema raggiunge DB, email o Stripe
 
-## 4. Input sanitization su tutto il sito `[ ]`
+## 4. Input sanitization su tutto il sito `[x]`
 
 - [ ] Creare `lib/sanitize.ts`: trim, normalizzazione Unicode (NFKC), rimozione null-byte e control-char, collasso whitespace, lowercase per email
 - [ ] Applicare al confine API + Convex + form admin; mantenere `escapeHtml` nelle email (già in `lib/mail.ts`)
@@ -58,7 +68,7 @@ Nota tecnica onesta: le function Convex **non vedono l'IP del client**, quindi l
 - [ ] CSP già presente in `next.config.mjs`: rivederla quando si aggiungono Stripe.js e Turnstile (nonce/allowlist domini)
 - Criterio di accettazione: payload `<script>`, `onerror`, unicode-trick e header-injection neutralizzati nei test
 
-## 5. Tutte le immagini in WebP `[ ]`
+## 5. Tutte le immagini in WebP `[x]`
 
 - [ ] Convertire tutti i PNG di `public/dimitri-potos/` (~13 MB) in WebP (qualità ~80, max-width 1920); rimuovere i 3 loghi duplicati (tenerne 1); rinominare file con slug senza spazi/virgole
 - [ ] Aggiornare i percorsi in `lib/i18n.tsx` (`PHOTOS`), `lib/data.ts` (`ARTWORK_PACKS`), `app/layout.tsx` (icone + OG image)
@@ -66,7 +76,7 @@ Nota tecnica onesta: le function Convex **non vedono l'IP del client**, quindi l
 - [ ] Aggiungere `sharp` per l'ottimizzazione in produzione; verificare pesi finali e CLS=0
 - Criterio di accettazione: zero PNG/JPG locali, Lighthouse immagini verde, nessun layout shift
 
-## 6. Portale cliente + Cloudflare Turnstile `[ ]`
+## 6. Portale cliente + Cloudflare Turnstile `[x]`
 
 Autenticazione reale (prerequisito di 7 per gli acquisti loggati). Provider suggerito: Convex Auth.
 
@@ -79,7 +89,7 @@ Autenticazione reale (prerequisito di 7 per gli acquisti loggati). Provider sugg
 - [ ] Aggiornare `privacy`/`termini`/`cookie` (account, 2FA, Turnstile, Stripe)
 - Criterio di accettazione: registrazione→verifica→login→2FA→reset funzionano end-to-end; bot bloccati da Turnstile nei test
 
-## 7. Carrello + checkout su Stripe `[ ]`
+## 7. Carrello + checkout su Stripe `[x]` (eccetto Stripe Tax: si attiva in dashboard Stripe)
 
 Dipende da: 1 (webhook), 3+4 (validazione/sanitizzazione), 6 (account per acquisti loggati; checkout ospite via email come fallback).
 

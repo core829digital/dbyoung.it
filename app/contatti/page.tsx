@@ -5,15 +5,18 @@ import { Mail, CalendarCheck } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { useLang } from "@/lib/i18n";
 import { pushInbox } from "@/lib/analytics";
+import { TurnstileWidget } from "@/components/turnstile";
 
 export default function ContattiPage() {
   const { t } = useLang();
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "err">("idle");
+  const [captcha, setCaptcha] = useState("");
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const fd = new FormData(form);
+    fd.append("turnstile", captcha);
     setStatus("sending");
     try {
       const res = await fetch(form.action, { method: "POST", body: fd });
@@ -74,6 +77,7 @@ export default function ContattiPage() {
           <button disabled={status === "sending"} className="btn-fire w-full rounded-full py-3.5 text-sm font-semibold disabled:opacity-60">
             {status === "sending" ? t.forms.sending : t.contact.submit}
           </button>
+          <TurnstileWidget onToken={setCaptcha} />
           <div aria-live="polite">
             {status === "ok" && <p className="text-sm text-fire-ember">{t.forms.okContact}</p>}
             {status === "err" && <p className="text-sm text-red-300">{t.forms.err}</p>}

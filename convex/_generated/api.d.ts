@@ -8,14 +8,17 @@
  * @module
  */
 
+import type * as auth from "../auth.js";
 import type * as bookings from "../bookings.js";
-import type * as chat from "../chat.js";
 import type * as crons from "../crons.js";
+import type * as licenses from "../licenses.js";
 import type * as messages from "../messages.js";
 import type * as newsletter from "../newsletter.js";
+import type * as orders from "../orders.js";
 import type * as products from "../products.js";
 import type * as reports from "../reports.js";
 import type * as stats from "../stats.js";
+import type * as stripeEvents from "../stripeEvents.js";
 
 import type {
   ApiFromModules,
@@ -24,14 +27,17 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  auth: typeof auth;
   bookings: typeof bookings;
-  chat: typeof chat;
   crons: typeof crons;
+  licenses: typeof licenses;
   messages: typeof messages;
   newsletter: typeof newsletter;
+  orders: typeof orders;
   products: typeof products;
   reports: typeof reports;
   stats: typeof stats;
+  stripeEvents: typeof stripeEvents;
 }>;
 
 /**

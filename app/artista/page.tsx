@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Music2, Guitar, Piano, Drum } from "lucide-react";
 import { Reveal, SectionHeading } from "@/components/reveal";
 import { useLang, PHOTOS } from "@/lib/i18n";
@@ -26,9 +27,8 @@ export default function ArtistaPage() {
           </div>
         </Reveal>
         <Reveal delay={0.15}>
-          <div className="overflow-hidden rounded-[2rem] border border-white/10">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={PHOTOS.artistPortrait} alt="Dimitri Bouturline — DBYoung" className="aspect-[4/5] w-full object-cover" />
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10">
+            <Image src={PHOTOS.artistPortrait} alt="Dimitri Bouturline — DBYoung" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
           </div>
         </Reveal>
       </div>
@@ -53,9 +53,8 @@ export default function ArtistaPage() {
         <SectionHeading kicker={t.artist.galleryKicker} title={t.artist.galleryTitle} />
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           {PHOTOS.gallery.map((src, i) => (
-            <Reveal key={src} delay={i * 0.1} className="card-hover overflow-hidden rounded-[2rem] border border-white/10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt={`Dimitri Bouturline — DBYoung (${i + 1})`} loading="lazy" className="aspect-[3/4] w-full object-cover" />
+            <Reveal key={src} delay={i * 0.1} className="card-hover relative aspect-[3/4] overflow-hidden rounded-[2rem] border border-white/10">
+              <Image src={src} alt={`Dimitri Bouturline — DBYoung (${i + 1})`} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
             </Reveal>
           ))}
         </div>

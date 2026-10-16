@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { useRef } from "react";
 import { useLang, PHOTOS } from "@/lib/i18n";
@@ -128,10 +129,12 @@ export const DBYoungHero = () => {
                 >
                   <div className="absolute -inset-4 rounded-full bg-fire/30 blur-2xl" />
                   <div className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-fire via-fire-hot to-fire-deep" />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={PHOTOS.heroProfile}
                     alt="Dimitri Bouturline — DBYoung"
+                    width={288}
+                    height={288}
+                    priority
                     className="relative h-32 w-32 rounded-full border-4 border-black object-cover shadow-fire sm:h-44 sm:w-44 lg:h-64 lg:w-64 xl:h-72 xl:w-72"
                   />
                   <span className="absolute bottom-2 right-2 h-5 w-5 rounded-full border-[3px] border-black bg-fire lg:bottom-4 lg:right-4 lg:h-6 lg:w-6" />

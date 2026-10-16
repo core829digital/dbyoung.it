@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Instagram, Facebook, Youtube, Music2 } from "lucide-react";
 import { SOCIALS } from "@/lib/utils";
 import { useLang, LangToggle, PHOTOS } from "@/lib/i18n";
@@ -17,8 +18,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4 md:px-8">
         <div>
           <div className="flex items-center gap-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={PHOTOS.logo} alt="DBYoung logo" className="h-11 w-11 rounded-full object-cover" />
+            <Image src={PHOTOS.logo} alt="DBYoung logo" width={88} height={88} className="h-11 w-11 rounded-full object-cover" />
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/55">{t.footer.tag}</p>
           <div className="mt-5 flex items-center gap-2">

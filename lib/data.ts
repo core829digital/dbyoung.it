@@ -24,7 +24,7 @@ export interface Product {
 }
 
 /** Artwork ufficiale per prodotti digitali */
-export const ARTWORK_PACKS = "/dimitri-potos/dbyoung-sample-packs-compositions-artwork.png";
+export const ARTWORK_PACKS = "/dimitri-potos/artwork-sample-packs.webp";
 
 const ROOT = "AUDIO-UPLOADS-BEATS-SAMPLEPACKS-COLONNESONORE";
 

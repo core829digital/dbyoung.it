@@ -4,15 +4,15 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 
 export type Lang = "it" | "en";
 
-/* Foto reali di Dimitri (public/dimitri-potos) */
-const P = "/dimitri-potos/ChatGPT%20Image%2028%20ago%202026,";
+/* Foto reali di Dimitri (public/dimitri-potos, tutte WebP — vedi scripts/to-webp.mjs) */
+const P = "/dimitri-potos";
 export const PHOTOS = {
-  logo: "/dimitri-potos/DBYOUNG%20LOGO%20trasparent%20webp.webp",
-  heroProfile: `${P}%2017_03_29.png`,
-  homeArtist: `${P}%2016_32_34.png`,
-  artistPortrait: `${P}%2017_28_57.png`,
-  eventsMood: `${P}%2017_15_42.png`,
-  gallery: [`${P}%2016_44_51.png`, `${P}%2016_53_22.png`, `${P}%2017_07_52.png`],
+  logo: `${P}/dbyoung-logo.webp`,
+  heroProfile: `${P}/dbyoung-hero-profile.webp`,
+  homeArtist: `${P}/dbyoung-home-artist.webp`,
+  artistPortrait: `${P}/dbyoung-artist-portrait.webp`,
+  eventsMood: `${P}/dbyoung-events-mood.webp`,
+  gallery: [`${P}/dbyoung-gallery-1.webp`, `${P}/dbyoung-gallery-2.webp`, `${P}/dbyoung-gallery-3.webp`],
 };
 
 /* Link Isola Events / Location (il portale completo vivrà su events.dbyoung.it) */

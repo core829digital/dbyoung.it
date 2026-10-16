@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart3, ShoppingBag, MessageSquare, Upload, LogOut, Trash2, Inbox, KeyRound } from "lucide-react";
-import { SUPERADMIN_EMAIL } from "@/lib/utils";
+import Image from "next/image";
+import { BarChart3, ShoppingBag, MessageSquare, Upload, LogOut, Trash2, Inbox, KeyRound, ShieldCheck } from "lucide-react";
+import { TurnstileWidget } from "@/components/turnstile";
 import { PHOTOS } from "@/lib/i18n";
 import { PRODUCTS, ARTWORK_PACKS, type Product, type ProductType } from "@/lib/data";
 import {
@@ -19,16 +20,33 @@ import {
   type InboxItem,
   type License,
 } from "@/lib/analytics";
-import { cloudFetchOverview, convexConfigured, type CloudOverview } from "@/lib/backend";
+
+interface AdminUser {
+  id: string;
+  email: string;
+  role: string;
+  isAdmin: boolean;
+}
+
+interface CloudOverview {
+  totalViews: number;
+  orders: number;
+  revenue: number;
+}
 
 /**
  * Dashboard admin custom-made (stile Shopify essenziale).
  * Dati local-first (localStorage), pronti alla migrazione su Convex.
  */
 export default function AdminPage() {
-  const [email, setEmail] = useState("");
-  const [authed, setAuthed] = useState(false);
-  const [denied, setDenied] = useState(false);
+  const [user, setUser] = useState<AdminUser | null>(null);
+  const [checking, setChecking] = useState(true);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [challenge, setChallenge] = useState("");
+  const [twofaCode, setTwofaCode] = useState("");
+  const [captcha, setCaptcha] = useState("");
+  const [denied, setDenied] = useState("");
   const [tab, setTab] = useState<"stats" | "prodotti" | "licenze" | "messaggi">("stats");
   const [stats, setStats] = useState<Stats | null>(null);
   const [cloud, setCloud] = useState<CloudOverview | null>(null);
@@ -38,6 +56,8 @@ export default function AdminPage() {
   const [licSlug, setLicSlug] = useState(PRODUCTS[0].slug);
   const [licEmail, setLicEmail] = useState("");
   const [notice, setNotice] = useState("");
+
+  const authed = user?.isAdmin === true;
 
   // Form nuovo prodotto
   const [title, setTitle] = useState("");
@@ -52,21 +72,72 @@ export default function AdminPage() {
     setInbox(getInbox());
     setCustom(getCustomProducts());
     setLicenses(getLicenses());
-    if (convexConfigured()) cloudFetchOverview().then((o) => o && setCloud(o));
+    fetch("/api/admin/overview")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((o) => o && setCloud(o))
+      .catch(() => undefined);
   };
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.user?.isAdmin) setUser(d.user);
+        setChecking(false);
+      })
+      .catch(() => setChecking(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (authed) refresh();
   }, [authed, tab]);
 
-  const login = (e: React.FormEvent) => {
+  const doLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim().toLowerCase() === SUPERADMIN_EMAIL) {
-      setAuthed(true);
-      setDenied(false);
-    } else {
-      setDenied(true);
+    setDenied("");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword, turnstile: captcha }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Accesso negato");
+      if (data.need2fa) {
+        setChallenge(data.challenge);
+        return;
+      }
+      if (!data.user?.isAdmin) throw new Error("Accesso riservato agli amministratori");
+      setUser(data.user);
+    } catch (e) {
+      setDenied(e instanceof Error ? e.message : "Accesso negato");
     }
+  };
+
+  const doTwofa = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setDenied("");
+    try {
+      const res = await fetch("/api/auth/verify-2fa", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ challenge, code: twofaCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Codice non valido");
+      if (!data.user?.isAdmin) throw new Error("Accesso riservato agli amministratori");
+      setUser(data.user);
+      setChallenge("");
+      setTwofaCode("");
+    } catch (e) {
+      setDenied(e instanceof Error ? e.message : "Codice non valido");
+    }
+  };
+
+  const doLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" }).catch(() => undefined);
+    setUser(null);
   };
 
   const publish = (e: React.FormEvent) => {
@@ -104,21 +175,41 @@ export default function AdminPage() {
   const titleOf = (id: string) =>
     PRODUCTS.find((p) => p.id === id)?.title ?? custom.find((p) => p.id === id)?.title ?? id;
 
+  if (checking) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-obsidian px-4">
+        <p className="text-sm text-white/50">Verifica sessione…</p>
+      </div>
+    );
+  }
+
   if (!authed) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-obsidian px-4">
-        <form onSubmit={login} className="w-full max-w-sm rounded-[2rem] border border-white/10 bg-obsidian-card p-8">
-          <div className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={PHOTOS.logo} alt="DBYoung logo" className="h-10 w-10 rounded-full object-cover" />
-            <div><p className="font-display font-bold">Admin</p><p className="text-xs text-white/50">dbyoung.it/admin</p></div>
-          </div>
-          <label className="mt-6 block text-sm text-white/60">Email superadmin</label>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required placeholder="contact.core829@gmail.com" className="mt-2 h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
-          <button className="btn-fire mt-4 w-full rounded-full py-3 text-sm font-semibold">Accedi</button>
-          {denied && <p className="mt-3 text-xs text-fire-ember">Accesso negato: solo il superadmin può entrare.</p>}
-          <p className="mt-4 text-[11px] leading-relaxed text-white/35">Accesso riservato al superadmin.</p>
-        </form>
+        {challenge ? (
+          <form onSubmit={doTwofa} className="w-full max-w-sm rounded-[2rem] border border-white/10 bg-obsidian-card p-8">
+            <p className="flex items-center gap-2 font-display font-bold"><ShieldCheck className="h-5 w-5 text-fire" /> Verifica 2FA</p>
+            <p className="mt-1 text-xs text-white/50">Inserisci il codice a 6 cifre dell&apos;app authenticator.</p>
+            <input value={twofaCode} onChange={(e) => setTwofaCode(e.target.value)} inputMode="numeric" maxLength={6} placeholder="000000" className="mt-4 h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-center font-mono text-sm tracking-[0.5em] text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
+            <button className="btn-fire mt-4 w-full rounded-full py-3 text-sm font-semibold">Verifica</button>
+            {denied && <p className="mt-3 text-xs text-fire-ember">{denied}</p>}
+          </form>
+        ) : (
+          <form onSubmit={doLogin} className="w-full max-w-sm rounded-[2rem] border border-white/10 bg-obsidian-card p-8">
+            <div className="flex items-center gap-3">
+              <Image src={PHOTOS.logo} alt="DBYoung logo" width={80} height={80} className="h-10 w-10 rounded-full object-cover" />
+              <div><p className="font-display font-bold">Admin</p><p className="text-xs text-white/50">dbyoung.it/admin</p></div>
+            </div>
+            <label htmlFor="admin-email" className="mt-6 block text-sm text-white/60">Email amministratore</label>
+            <input id="admin-email" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} type="email" required autoComplete="email" placeholder="admin@dbyoung.it" className="mt-2 h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
+            <label htmlFor="admin-password" className="mt-3 block text-sm text-white/60">Password</label>
+            <input id="admin-password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} type="password" required autoComplete="current-password" placeholder="••••••••••••" className="mt-2 h-11 w-full rounded-xl border border-white/15 bg-black/40 px-4 text-sm text-white placeholder:text-white/30 focus:border-fire/60 focus:outline-none" />
+            <div className="mt-3"><TurnstileWidget onToken={setCaptcha} /></div>
+            <button className="btn-fire mt-4 w-full rounded-full py-3 text-sm font-semibold">Accedi</button>
+            {denied && <p className="mt-3 text-xs text-fire-ember">{denied}</p>}
+            <p className="mt-4 text-[11px] leading-relaxed text-white/35">Accesso riservato agli amministratori. IP e tentativi registrati.</p>
+          </form>
+        )}
       </div>
     );
   }
@@ -128,11 +219,10 @@ export default function AdminPage() {
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={PHOTOS.logo} alt="DBYoung logo" className="h-10 w-10 rounded-full object-cover" />
-            <div><p className="font-display font-bold">Admin</p><p className="text-xs text-white/50">{SUPERADMIN_EMAIL}</p></div>
+            <Image src={PHOTOS.logo} alt="DBYoung logo" width={80} height={80} className="h-10 w-10 rounded-full object-cover" />
+            <div><p className="font-display font-bold">Admin</p><p className="text-xs text-white/50">{user?.email}</p></div>
           </div>
-          <button onClick={() => setAuthed(false)} className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-fire/50 hover:text-white"><LogOut className="h-4 w-4" /> Esci</button>
+          <button onClick={doLogout} className="flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-fire/50 hover:text-white"><LogOut className="h-4 w-4" /> Esci</button>
         </div>
 
         <div className="mt-6 flex flex-wrap gap-2">
@@ -219,10 +309,31 @@ export default function AdminPage() {
               onSubmit={(e) => {
                 e.preventDefault();
                 if (!licEmail.includes("@")) return;
-                const lic = issueLicense(licSlug, licEmail);
+                const email = licEmail;
+                const slug = licSlug;
                 setLicEmail("");
-                setNotice(`Licenza ${lic.code} emessa per ${licEmail || lic.email} — comunicala al cliente: scarica da /libreria.`);
-                refresh();
+                // Codice generato dal server (mai dal client): prima il cloud, poi il mirror locale
+                fetch("/api/admin/licenses", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ productSlug: slug, email }),
+                })
+                  .then((r) => (r.ok ? r.json() : null))
+                  .then((d) => {
+                    if (d?.code) {
+                      issueLicense(slug, email, d.code);
+                      setNotice(`Licenza ${d.code} emessa per ${email} — comunicala al cliente: scarica da /libreria.`);
+                    } else {
+                      const lic = issueLicense(slug, email);
+                      setNotice(`Licenza ${lic.code} emessa solo in locale (cloud non disponibile) — comunicala al cliente: scarica da /libreria.`);
+                    }
+                    refresh();
+                  })
+                  .catch(() => {
+                    const lic = issueLicense(slug, email);
+                    setNotice(`Licenza ${lic.code} emessa solo in locale — comunicala al cliente: scarica da /libreria.`);
+                    refresh();
+                  });
               }}
               className="h-fit rounded-3xl border border-fire/25 bg-obsidian-card p-6"
             >

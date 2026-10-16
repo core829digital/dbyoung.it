@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { ArrowRight, Disc3, CalendarCheck, Flame, Music4, Radio, Star } from "lucide-react";
 import { DBYoungHero } from "@/components/ui/prisma-hero";
@@ -10,6 +11,7 @@ import { PRODUCTS } from "@/lib/data";
 import { SOCIALS } from "@/lib/utils";
 import { useLang, PHOTOS } from "@/lib/i18n";
 import { pushInbox } from "@/lib/analytics";
+import { TurnstileWidget } from "@/components/turnstile";
 
 const CARD_ICONS = [Music4, Star, CalendarCheck, Disc3];
 
@@ -17,14 +19,17 @@ export default function Home() {
   const { t } = useLang();
   const featured = PRODUCTS.filter((p) => p.featured).slice(0, 3);
   const [news, setNews] = useState<"idle" | "sending" | "ok" | "err">("idle");
+  const [captcha, setCaptcha] = useState("");
 
   const subscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const email = String(new FormData(form).get("email") ?? "");
+    const fd = new FormData(form);
+    fd.append("turnstile", captcha);
+    const email = String(fd.get("email") ?? "");
     setNews("sending");
     try {
-      const res = await fetch(form.action, { method: "POST", body: new FormData(form) });
+      const res = await fetch(form.action, { method: "POST", body: fd });
       if (!res.ok) throw new Error();
       pushInbox({ type: "newsletter", email });
       form.reset();
@@ -69,9 +74,8 @@ export default function Home() {
             </div>
           </Reveal>
           <Reveal delay={0.15}>
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={PHOTOS.homeArtist} alt="Dimitri Bouturline — DBYoung" className="aspect-[4/5] w-full object-cover md:aspect-square" />
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 md:aspect-square">
+              <Image src={PHOTOS.homeArtist} alt="Dimitri Bouturline — DBYoung" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-2xl border border-white/10 bg-black/60 px-4 py-3 backdrop-blur">
                 <div className="flex items-center gap-2 text-sm text-white/80"><Flame className="h-4 w-4 text-fire" /> {t.home.artistBadge}</div>
@@ -133,14 +137,20 @@ export default function Home() {
       <section className="mx-auto max-w-3xl px-4 py-20 text-center md:px-8">
         <SectionHeading kicker={t.home.newsKicker} title={t.home.newsTitle} sub={t.home.newsSub} />
         <Reveal delay={0.1}>
-          <form action="/api/newsletter" method="post" onSubmit={subscribe} className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
-            <input required type="email" name="email" placeholder={t.home.newsPlaceholder} className="flex-1 rounded-full border border-white/15 bg-white/5 px-5 py-3.5 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
-            <button disabled={news === "sending"} className="btn-fire rounded-full px-7 py-3.5 text-sm font-semibold disabled:opacity-60">
-              {news === "sending" ? t.forms.sending : t.home.newsButton}
-            </button>
+          <form action="/api/newsletter" method="post" onSubmit={subscribe} className="mx-auto mt-8 flex max-w-md flex-col gap-3">
+            <label htmlFor="news-email" className="sr-only">Email</label>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input id="news-email" required type="email" name="email" autoComplete="email" maxLength={254} placeholder={t.home.newsPlaceholder} className="flex-1 rounded-full border border-white/15 bg-white/5 px-5 py-3.5 text-sm text-white placeholder:text-white/35 focus:border-fire/60 focus:outline-none" />
+              <button disabled={news === "sending"} className="btn-fire rounded-full px-7 py-3.5 text-sm font-semibold disabled:opacity-60">
+                {news === "sending" ? t.forms.sending : t.home.newsButton}
+              </button>
+            </div>
+            <TurnstileWidget onToken={setCaptcha} />
           </form>
-          {news === "ok" && <p className="mt-3 text-sm text-fire-ember">{t.forms.okNews}</p>}
-          {news === "err" && <p className="mt-3 text-sm text-red-300">{t.forms.err}</p>}
+          <div aria-live="polite">
+            {news === "ok" && <p className="mt-3 text-sm text-fire-ember">{t.forms.okNews}</p>}
+            {news === "err" && <p className="mt-3 text-sm text-red-300">{t.forms.err}</p>}
+          </div>
           <p className="mt-3 text-xs text-white/40">{t.home.newsPrivacy} <Link href="/privacy" className="underline hover:text-fire-hot">{t.home.newsPrivacyLink}</Link>.</p>
         </Reveal>
       </section>

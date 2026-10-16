@@ -17,13 +17,16 @@ export const api = {
     setActive: m("products:setActive"),
     remove: m("products:remove"),
   },
+  orders: {
+    create: m("orders:create"),
+    listByUser: q("orders:listByUser"),
+  },
+  stripeEvents: {
+    claim: m("stripeEvents:claim"),
+  },
   stats: {
     track: m("stats:track"),
     overview: q("stats:overview"),
-  },
-  chat: {
-    history: q("chat:history"),
-    send: m("chat:send"),
   },
   bookings: {
     create: m("bookings:create"),
@@ -41,6 +44,23 @@ export const api = {
     create: m("licenses:create"),
     getByCode: q("licenses:getByCode"),
     revoke: m("licenses:revoke"),
+    revokeBySession: m("licenses:revokeBySession"),
+    listByUser: q("licenses:listByUser"),
+    listBySession: q("licenses:listBySession"),
+  },
+  auth: {
+    register: m("auth:register"),
+    verifyEmail: m("auth:verifyEmail"),
+    login: m("auth:login"),
+    verifyTotpLogin: m("auth:verifyTotpLogin"),
+    loginBackupCode: m("auth:loginBackupCode"),
+    logout: m("auth:logout"),
+    me: q("auth:me"),
+    requestPasswordReset: m("auth:requestPasswordReset"),
+    resetPassword: m("auth:resetPassword"),
+    totpSetup: m("auth:totpSetup"),
+    totpEnable: m("auth:totpEnable"),
+    totpDisable: m("auth:totpDisable"),
   },
 };
 

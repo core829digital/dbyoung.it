@@ -2,11 +2,13 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { Play, Pause, ShoppingCart, BadgePercent, FileDown, Lock } from "lucide-react";
+import { Play, Pause, ShoppingCart, FileDown, Lock, Plus, Check } from "lucide-react";
 import type { Product } from "@/lib/data";
 import { useLang } from "@/lib/i18n";
 import { trackBuy } from "@/lib/analytics";
+import { useCart } from "@/lib/cart";
 
 function fmt(s: number) {
   if (!isFinite(s)) return "0:00";
@@ -17,6 +19,8 @@ function fmt(s: number) {
 
 export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
   const { t, lang } = useLang();
+  const { add, has } = useCart();
+  const inCart = has(p.slug);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [prog, setProg] = useState(0);
@@ -50,8 +54,7 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
       className="card-hover group flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-obsidian-card"
     >
       <div className="relative aspect-square overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={p.cover} alt={p.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
+        <Image src={p.cover} alt={p.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
         <span className="absolute right-3 top-3 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] uppercase tracking-wider text-white/80 backdrop-blur">
           {t.shop.types[p.type] ?? p.type}
@@ -134,6 +137,16 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
             </Link>
           )}
         </div>
+        {!p.licenseOnly && (
+          <button
+            onClick={() => { add(p.slug); trackBuy(p.id); }}
+            disabled={inCart}
+            className="mt-2.5 flex items-center justify-center gap-1.5 rounded-full border border-white/15 py-2 text-xs text-white/70 transition-colors hover:border-fire/50 hover:text-white disabled:opacity-60"
+          >
+            {inCart ? <Check className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
+            {inCart ? "Nel carrello" : "Aggiungi al carrello"}
+          </button>
+        )}
         <Link href="/libreria" className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-white/40 transition-colors hover:text-fire-hot">
           <FileDown className="h-3.5 w-3.5" /> {t.shop.owned} {t.shop.libraryCta}
         </Link>

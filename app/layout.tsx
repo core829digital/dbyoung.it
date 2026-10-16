@@ -6,6 +6,7 @@ import { SmoothScroll } from "@/components/smooth-scroll";
 import { Tracker } from "@/components/tracker";
 import { CookieBanner } from "@/components/cookie-banner";
 import { LanguageProvider } from "@/lib/i18n";
+import { CartProvider } from "@/lib/cart";
 
 export const metadata: Metadata = {
   title: "DBYoung · Dimitri Bouturline — Jazz, Blues, Classica & Moderna | Beat, Sample Pack, Eventi",
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://dbyoung.it"),
   alternates: { canonical: "https://dbyoung.it" },
   robots: { index: true, follow: true },
-  icons: { icon: "/dimitri-potos/DBYOUNG%20LOGO%20trasparent%20webp.webp", apple: "/dimitri-potos/DBYOUNG%20LOGO%20trasparent%20webp.webp" },
+  icons: { icon: "/dimitri-potos/dbyoung-logo.webp", apple: "/dimitri-potos/dbyoung-logo.webp" },
   openGraph: {
     title: "DBYoung · Dimitri Bouturline",
     description: "Jazz, Blues, Classica & Moderna · Beat · Sample Pack · Eventi",
@@ -22,13 +23,13 @@ export const metadata: Metadata = {
     siteName: "DBYoung",
     type: "website",
     locale: "it_IT",
-    images: [{ url: "/dimitri-potos/DBYOUNG%20LOGO%20trasparent%20webp.webp", width: 1200, height: 1200, alt: "DBYoung logo" }],
+    images: [{ url: "/dimitri-potos/dbyoung-logo.webp", width: 1200, height: 1200, alt: "DBYoung logo" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "DBYoung · Dimitri Bouturline",
     description: "Jazz, Blues, Classica & Moderna · Beat · Sample Pack · Eventi",
-    images: ["/dimitri-potos/DBYOUNG%20LOGO%20trasparent%20webp.webp"],
+    images: ["/dimitri-potos/dbyoung-logo.webp"],
   },
 };
 
@@ -50,12 +51,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Salta al contenuto
         </a>
         <LanguageProvider>
+          <CartProvider>
           <SmoothScroll />
           <Tracker />
           <Navbar />
           <main id="contenuto" className="min-h-screen">{children}</main>
           <Footer />
           <CookieBanner />
+          </CartProvider>
         </LanguageProvider>
       </body>
     </html>

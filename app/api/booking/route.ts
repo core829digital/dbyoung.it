@@ -1,24 +1,36 @@
-import { sendMail, ok, fail, escapeHtml, isValidEmail } from "@/lib/mail";
-import { cloudCreateBooking } from "@/lib/backend";
+import { sendMail, ok, fail, escapeHtml } from "@/lib/mail";
+import { bookingSchema, zodErrors } from "@/lib/validation";
+import { sanitizeText, sanitizeMultiline, sanitizeEmail } from "@/lib/sanitize";
+import { verifyTurnstile } from "@/lib/turnstile";
+import { clientIpFromHeaders } from "@/lib/ipAllowlist";
+import { signedMutation } from "@/lib/serverConvex";
+import { api } from "@/convex/_generated/api";
 
 const ADMIN = process.env.ADMIN_EMAIL ?? "contact.core829@gmail.com";
 
 export async function POST(req: Request) {
   try {
     const form = await req.formData();
-    const name = String(form.get("name") ?? "").trim().slice(0, 100);
-    const email = String(form.get("email") ?? "").trim().slice(0, 254);
-    const date = String(form.get("date") ?? "").trim().slice(0, 20);
-    const city = String(form.get("city") ?? "").trim().slice(0, 100);
-    const message = String(form.get("message") ?? "").trim().slice(0, 5000);
+    const parsed = bookingSchema.safeParse({
+      name: form.get("name"),
+      email: form.get("email"),
+      date: String(form.get("date") ?? ""),
+      city: String(form.get("city") ?? ""),
+      message: form.get("message"),
+      turnstile: form.get("turnstile"),
+    });
+    if (!parsed.success) return fail(zodErrors(parsed.error).join("; "), 400);
 
-    if (name.length < 2) return fail("Nome non valido.", 400);
-    if (!isValidEmail(email)) return fail("Email non valida.", 400);
-    if (message.length < 3) return fail("Messaggio troppo corto.", 400);
-    if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) return fail("Data non valida.", 400);
+    const t = await verifyTurnstile(parsed.data.turnstile, clientIpFromHeaders(req.headers));
+    if (!t.ok) return fail("Verifica anti-bot fallita, riprova.", 403);
 
-    // Persistenza su Convex (bookings) + notifica cron reminder alla connessione backend — intanto backup in inbox admin via client
-    cloudCreateBooking({ name, email, date, city, message });
+    const name = sanitizeText(parsed.data.name, 100);
+    const email = sanitizeEmail(parsed.data.email);
+    const date = parsed.data.date;
+    const city = sanitizeText(parsed.data.city ?? "", 100);
+    const message = sanitizeMultiline(parsed.data.message, 5000);
+
+    await signedMutation(api.bookings.create, "bookings.create", { email }, { name, email, date, city, message });
     const sentAdmin = await sendMail({
       to: ADMIN,
       subject: `Nuova richiesta evento — ${escapeHtml(name)} (${escapeHtml(date) || "data da definire"})`,

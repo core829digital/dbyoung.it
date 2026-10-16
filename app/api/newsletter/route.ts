@@ -1,14 +1,25 @@
-import { sendMail, ok, fail, isValidEmail } from "@/lib/mail";
-import { cloudSubscribeNewsletter } from "@/lib/backend";
+import { sendMail, ok, fail } from "@/lib/mail";
+import { newsletterSchema, zodErrors } from "@/lib/validation";
+import { sanitizeEmail } from "@/lib/sanitize";
+import { verifyTurnstile } from "@/lib/turnstile";
+import { clientIpFromHeaders } from "@/lib/ipAllowlist";
+import { signedMutation } from "@/lib/serverConvex";
+import { api } from "@/convex/_generated/api";
 
 export async function POST(req: Request) {
   try {
     const form = await req.formData();
-    const email = String(form.get("email") ?? "").trim().toLowerCase().slice(0, 254);
-    if (!isValidEmail(email)) return fail("Email non valida.", 400);
+    const parsed = newsletterSchema.safeParse({
+      email: form.get("email"),
+      turnstile: form.get("turnstile"),
+    });
+    if (!parsed.success) return fail(zodErrors(parsed.error).join("; "), 400);
 
-    // Persistenza su Convex (newsletter) + doppio opt-in alla connessione backend — intanto backup in inbox admin via client
-    cloudSubscribeNewsletter(email);
+    const t = await verifyTurnstile(parsed.data.turnstile, clientIpFromHeaders(req.headers));
+    if (!t.ok) return fail("Verifica anti-bot fallita, riprova.", 403);
+
+    const email = sanitizeEmail(parsed.data.email);
+    await signedMutation(api.newsletter.subscribe, "newsletter.subscribe", { email }, { email });
     const sent = await sendMail({
       to: email,
       subject: "Benvenuto nel mondo DBYoung",

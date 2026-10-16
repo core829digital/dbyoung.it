@@ -2,15 +2,16 @@
 
 import type { Product } from "@/lib/data";
 import { ARTWORK_PACKS } from "@/lib/data";
-import {
-  cloudTrackView,
-  cloudCreateProduct,
-  cloudCreateBooking,
-  cloudCreateMessage,
-  cloudSubscribeNewsletter,
-  cloudCreateLicense,
-  cloudRevokeLicense,
-} from "./backend";
+import { cloudTrackView } from "./backend";
+
+/** Mirror best-effort verso le API admin (richiedono sessione admin via cookie). */
+function mirrorAdmin(path: string, init: RequestInit) {
+  try {
+    void fetch(path, init).catch(() => undefined);
+  } catch {
+    /* mai bloccare la UX locale */
+  }
+}
 
 /**
  * Analytics & inbox LOCAL-FIRST (localStorage).
@@ -112,11 +113,7 @@ export function pushInbox(item: Omit<InboxItem, "id" | "date">) {
   const all = read<InboxItem[]>(INBOX_KEY, []);
   all.unshift({ ...item, id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, date: new Date().toISOString() });
   write(INBOX_KEY, all.slice(0, 500));
-  // Mirror best-effort verso Convex
-  if (item.type === "newsletter") cloudSubscribeNewsletter(item.email);
-  else if (item.type === "booking")
-    cloudCreateBooking({ name: item.name ?? "", email: item.email, date: item.day ?? "", city: item.city, message: item.message ?? "" });
-  else cloudCreateMessage({ name: item.name ?? "", email: item.email, subject: item.subject ?? "", body: item.message ?? "" });
+  // Niente mirror diretto: le API route persistono già su Convex server-side (firmato).
 }
 
 export function getInbox(): InboxItem[] {
@@ -136,7 +133,11 @@ export function addCustomProduct(p: Product) {
   const all = read<Product[]>(CUSTOM_PRODUCTS_KEY, []);
   all.unshift(p);
   write(CUSTOM_PRODUCTS_KEY, all);
-  cloudCreateProduct({ title: p.title, type: p.type, price: p.price, stripeLink: p.stripeLink, description: p.description, filePath: p.file || undefined });
+  mirrorAdmin("/api/admin/products", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: p.title, type: p.type, price: p.price, stripeLink: p.stripeLink, description: p.description, filePath: p.file || undefined }),
+  });
 }
 
 export function removeCustomProduct(id: string) {
@@ -175,9 +176,9 @@ export function getLicenses(): License[] {
   return read<License[]>(LICENSES_KEY, []);
 }
 
-export function issueLicense(productSlug: string, email: string): License {
+export function issueLicense(productSlug: string, email: string, code = generateLicenseCode()): License {
   const lic: License = {
-    code: generateLicenseCode(),
+    code,
     productSlug,
     email,
     date: new Date().toISOString(),
@@ -186,7 +187,11 @@ export function issueLicense(productSlug: string, email: string): License {
   const all = read<License[]>(LICENSES_KEY, []);
   all.unshift(lic);
   write(LICENSES_KEY, all);
-  cloudCreateLicense({ code: lic.code, productSlug, email });
+  mirrorAdmin("/api/admin/licenses", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ productSlug, email }),
+  });
   return lic;
 }
 
@@ -195,7 +200,7 @@ export function revokeLocalLicense(code: string) {
     LICENSES_KEY,
     read<License[]>(LICENSES_KEY, []).map((l) => (l.code === code ? { ...l, active: false } : l))
   );
-  cloudRevokeLicense(code);
+  mirrorAdmin(`/api/admin/licenses?code=${encodeURIComponent(code)}`, { method: "DELETE" });
 }
 
 export function findLocalLicense(code: string): License | null {
