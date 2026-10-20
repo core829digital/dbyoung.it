@@ -65,6 +65,14 @@ export async function POST(req: Request) {
         receipt_email: email,
         metadata: { project: "dbyoung.it", email },
       },
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {
+          description: "DBYoung — licenza digitale (beat / sample pack)",
+          footer: "Dimitri Bouturline (D.B Young) — www.dbyoung.it",
+          metadata: { project: "dbyoung.it", email },
+        },
+      },
       success_url: `${base}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${base}/checkout/cancel`,
     });
