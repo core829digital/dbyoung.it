@@ -17,18 +17,34 @@ export function isValidEmail(email: string): boolean {
 }
 
 /** Invia email via Resend se configurato, altrimenti logga (mock dev). */
-export async function sendMail({ to, subject, html }: { to: string; subject: string; html: string }) {
+export async function sendMail({
+  to,
+  subject,
+  html,
+  attachments,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+  attachments?: Array<{ filename: string; content: Buffer }>;
+}) {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.RESEND_FROM ?? "DBYoung <noreply@dbyoung.it>";
   if (!key) {
     if (process.env.NODE_ENV !== "production") {
-      console.log("[mock-email]", { to, subject });
+      console.log("[mock-email]", { to, subject, attachments: attachments?.map((a) => a.filename) });
     }
     return { mocked: true };
   }
   const { Resend } = await import("resend");
   const resend = new Resend(key);
-  return resend.emails.send({ from, to, subject, html });
+  return resend.emails.send({
+    from,
+    to,
+    subject,
+    html,
+    ...(attachments && attachments.length > 0 ? { attachments } : {}),
+  });
 }
 
 export function ok(data: unknown = {}) {

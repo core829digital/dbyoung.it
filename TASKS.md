@@ -1,24 +1,29 @@
 # Task List — dbyoung.it (roadmap Stripe + lancio)
 
 Legenda: `[ ]` da fare · `[~]` in corso · `[x]` fatto in codice.
-Ultimo aggiornamento: 2026-10-16.
+Ultimo aggiornamento: 2026-10-20.
 
-## Stato implementazione (2026-10-16)
+## Stato implementazione (2026-10-20)
 
-Verificato con `vitest` (25 test verdi), `tsc --noEmit` pulito e `next build` verde (45/45 pagine).
-**Fatto in codice:** task 1–6 completi, task 7 completo tranne Stripe Tax (si attiva in dashboard), immagini WebP + `next/image`, legali aggiornate.
-**Resta all'operatore (richiede servizi live, non automatizzabile qui):**
-`npx convex dev` + deploy + env Convex (`ADMIN_ACTION_SECRET`, `TOTP_ENCRYPTION_KEY`, `ADMIN_EMAILS`);
-chiavi Stripe live/test + Price ID per prodotto + webhook registrato + `stripe trigger` end-to-end;
-chiavi Turnstile + `RESEND_*`/`ADMIN_*` su Vercel + redeploy; DNS `events.dbyoung.it`;
-creazione primo admin (register con email in `ADMIN_EMAILS`); dry-run staging completo.
+Verificato con `vitest` (26 test verdi), `tsc --noEmit` pulito e `next build` verde.
+**Stripe LIVE collegato:** account `acct_1UJXAwDPkknNT3wY` (CORE829 SRL, paese RO, charges/payouts attivi).
+Catalogo creato con metadata `project=dbyoung.it` (non tocca i prodotti OneSpec/Immedial):
+Give a Start 150 €, Sacred Voices 120 €, Velvet & Tape 25 €, Melancholic Piano 30 €,
+Opera Cinematic 27 €, Velvet Nostalgia 35 €, Bundle completo 95 €, Produzione personalizzata (acconto) 350 €.
+Webhook dedicato `we_1USbKBDPkknNT3wYEjuRRetk` → `https://dbyoung.it/api/stripe/webhook`.
+Checkout live di prova creato e annullato: totale 245,00 € corretto (Give a Start + Bundle).
+Resend verificato (domini `dbyoung.it`, `onespec.eu`, `core829.net` verificati; email di test inviata).
+**Resta all'operatore (servizi live):**
+`npx convex dev` (login browser) + env Convex (`ADMIN_ACTION_SECRET`, `TOTP_ENCRYPTION_KEY`, `ADMIN_EMAILS`);
+env Vercel (`STRIPE_*`, `ADMIN_*`, `RESEND_*`, `TURNSTILE_*`, Convex) + redeploy;
+chiavi Turnstile; creazione primo admin (email in `ADMIN_EMAILS`); dry-run staging completo.
 
 ## Stato attuale (verificato sul codice)
 
-- Stripe **non attivo**: 9x `stripeLink: "#"` in `lib/data.ts:45-171`, nessun SDK, nessun webhook (`STRIPE_WEBHOOK_SECRET` solo commento in `.env.example:16`), tabella `orders` mai scritta (`convex/schema.ts:24-30`).
-- Auth admin **finta** (confronto email client-side in `app/admin/page.tsx:62-70`); nessun account cliente, nessun portale.
-- Validazione minima solo su 3 API route; nessuna sanitizzazione centralizzata; nessuno Zod/DOMPurify nel repo.
-- 13x `<img>` senza `next/image`; PNG ~13 MB in `public/dimitri-potos/`; nessun rate-limit persistente; zero test; zero CI.
+- Checkout Stripe **attivo**: prezzi solo server-side (Price ID in env), webhook firmato con idempotenza,
+  ricevuta Stripe (`payment_intent_data.receipt_email`) e certificato di licenza PDF allegato via Resend.
+- Auth admin e portale cliente reali (sessioni + 2FA TOTP); validazione Zod e sanitizzazione su tutte le API.
+- Immagini WebP + `next/image`; 26 test (validazione, sanitizzazione, IP allowlist, TOTP RFC 6238, HMAC Node↔Convex, PDF).
 
 ---
 
@@ -106,12 +111,12 @@ Dipende da: 1 (webhook), 3+4 (validazione/sanitizzazione), 6 (account per acquis
 
 Vedi risposta estesa in chat del 2026-10-14. In breve, oltre ai task 1–7:
 
-- [ ] Account Stripe live: chiavi live, webhook di produzione registrato, Price ID per prodotto, Stripe Tax attivo
+- [x] Account Stripe live: chiavi live, webhook di produzione registrato, Price ID per prodotto (Stripe Tax da attivare in dashboard quando ci sono le registrazioni IVA)
 - [ ] Vercel env di produzione complete (`RESEND_*`, `STRIPE_*`, `TURNSTILE_*`, `ADMIN_*`, Convex prod) + redeploy
-- [ ] Allineare progetto Convex: `.env.local` punta a `accurate-walrus-397`, `.env.example` a `festive-ptarmigan-321` — scegliere il progetto di produzione e deployare lì
-- [ ] Auth admin reale (il gate email client-side va rimosso prima del go-live)
+- [ ] Allineare progetto Convex: deployare le funzioni e impostare le env (`ADMIN_ACTION_SECRET`, `TOTP_ENCRYPTION_KEY`, `ADMIN_EMAILS`) sul deployment attivo `accurate-walrus-397`
+- [x] Auth admin reale (gate email client-side rimosso)
 - [ ] DNS live: `events.dbyoung.it` + verifica redirect 308 da `/eventi`
-- [ ] Legali aggiornate (account, pagamenti, 2FA, Turnstile, Stripe, refund policy, termini licenze)
+- [x] Legali aggiornate (account, pagamenti, 2FA, Turnstile, Stripe, refund policy, termini licenze)
 - [ ] Backup/restore `private_audio/` + procedura fulfillment manuale; test download ZIP in produzione
 - [ ] Monitoraggio (Sentry), uptime, inbox operativa (info@), runbook + piano rollback
 - [ ] Dry-run completo in staging: registrazione → 2FA → carrello → pagamento test → licenza → download → refund

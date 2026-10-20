@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { ConvexHttpClient } from "convex/browser";
 import { signServerAction } from "@/lib/adminSign";
 import { sendMail, escapeHtml } from "@/lib/mail";
+import { buildLicensePdf } from "@/lib/licensePdf";
 import { slugForPriceId } from "@/lib/stripe";
 import { PRODUCTS } from "@/lib/data";
 import { api } from "@/convex/_generated/api";
@@ -55,7 +56,7 @@ async function resolveProductId(c: ConvexHttpClient, slug: string): Promise<stri
     api.products.create,
     "products.create",
     { title: local.title },
-    { title: local.title, type: local.type, price: local.price, stripeLink: "", description: local.description }
+    { title: local.title, type: local.type, price: local.price, stripeLink: "", description: local.description, slug: local.slug }
   )) as string | null;
   return created;
 }
@@ -82,9 +83,12 @@ export async function POST(req: Request) {
 
   try {
     switch (event.type) {
-      case "checkout.session.completed": {
+      case "checkout.session.completed":
+      case "checkout.session.async_payment_succeeded": {
         const session = event.data.object as Stripe.Checkout.Session;
         const sessionId = session.id;
+        // Metodi di pagamento differiti: i diritti arrivano solo con async_payment_succeeded
+        if (session.payment_status !== "paid") break;
         const email = (session.customer_details?.email ?? (session.metadata?.email as string) ?? "").trim().toLowerCase();
         const items = JSON.parse((session.metadata?.items as string) ?? "[]") as Array<{ slug: string; tier: string }>;
         const userId = (session.metadata?.userId as string) || undefined;
@@ -113,12 +117,29 @@ export async function POST(req: Request) {
           }
           if (lines.length > 0) {
             const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dbyoung.it";
+            let attachments: Array<{ filename: string; content: Buffer }> | undefined;
+            try {
+              const pdf = await buildLicensePdf({
+                email,
+                orderId: sessionId,
+                date: new Date((session.created ?? Math.floor(Date.now() / 1000)) * 1000),
+                items: lines,
+              });
+              attachments = [{ filename: `DBYoung-licenza-${sessionId.slice(-8)}.pdf`, content: Buffer.from(pdf) }];
+            } catch {
+              // Il PDF non deve bloccare la consegna dei codici
+            }
             await sendMail({
               to: email,
               subject: "Il tuo ordine DBYoung è pronto",
-              html: `<h1>Grazie per l'acquisto!</h1><ul>${lines
-                .map((l) => `<li>${escapeHtml(l.title)} — codice <strong>${escapeHtml(l.code)}</strong></li>`)
-                .join("")}</ul><p>Scarica da <a href="${escapeHtml(base)}/libreria">${escapeHtml(base)}/libreria</a> inserendo i codici.</p>`,
+              html: `<h1>Grazie per l'acquisto!</h1>
+                <p>In allegato trovi il certificato di licenza con i diritti d'autore di <strong>Dimitri Bouturline (D.B Young)</strong>.</p>
+                <ul>${lines
+                  .map((l) => `<li>${escapeHtml(l.title)} — codice <strong>${escapeHtml(l.code)}</strong></li>`)
+                  .join("")}</ul>
+                <p>Scarica da <a href="${escapeHtml(base)}/libreria">${escapeHtml(base)}/libreria</a> inserendo i codici.</p>
+                <p style="font-size:12px;color:#666">Credito obbligatorio: Dimitri Bouturline (D.B Young). La rivendita dei file originali è vietata.</p>`,
+              ...(attachments ? { attachments } : {}),
             });
           }
         }

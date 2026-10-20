@@ -7,14 +7,10 @@ import { Reveal } from "@/components/reveal";
 import { TurnstileWidget } from "@/components/turnstile";
 import { useCart } from "@/lib/cart";
 import { PRODUCTS } from "@/lib/data";
-import type { LicenseTier } from "@/lib/cart-types";
-
-const TIERS: LicenseTier[] = ["base", "premium", "esclusiva"];
 
 export default function CheckoutPage() {
   const { items, remove, clear } = useCart();
   const [email, setEmail] = useState("");
-  const [tiers, setTiers] = useState<Record<string, LicenseTier>>({});
   const [accept, setAccept] = useState(false);
   const [token, setToken] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "err">("idle");
@@ -38,7 +34,7 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          items: items.map((i) => ({ slug: i.slug, tier: tiers[i.slug] ?? "base" })),
+          items: items.map((i) => ({ slug: i.slug, tier: "base" })),
           acceptTerms: accept,
           turnstile: token,
         }),
@@ -75,17 +71,7 @@ export default function CheckoutPage() {
                 <li key={i.slug} className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/40 p-4">
                   <div>
                     <p className="text-sm font-semibold text-white">{p.title}</p>
-                    <p className="text-xs text-white/45">€{p.price} · licenza {tiers[i.slug] ?? "base"}</p>
-                    <select
-                      value={tiers[i.slug] ?? "base"}
-                      onChange={(e) => setTiers((t) => ({ ...t, [i.slug]: e.target.value as LicenseTier }))}
-                      className="mt-2 rounded-lg border border-white/15 bg-black/60 px-2 py-1 text-xs text-white"
-                      aria-label={`Licenza per ${p.title}`}
-                    >
-                      {TIERS.map((tier) => (
-                        <option key={tier} value={tier}>{tier}</option>
-                      ))}
-                    </select>
+                    <p className="text-xs text-white/45">€{p.price} · licenza base (file WAV)</p>
                   </div>
                   <button onClick={() => remove(i.slug)} aria-label={`Rimuovi ${p.title}`} className="text-white/40 hover:text-red-300">
                     <Trash2 className="h-4 w-4" />

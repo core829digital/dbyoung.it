@@ -42,6 +42,8 @@ export const create = mutation({
     price: v.number(),
     stripeLink: v.string(),
     description: v.string(),
+    /** Slug catalogo (se assente viene generato dal titolo). */
+    slug: v.optional(v.string()),
     filePath: v.optional(v.string()),
     _auth: serverAuthArg,
   },
@@ -54,8 +56,15 @@ export const create = mutation({
     if (a.stripeLink.length > 500) throw new Error("Link troppo lungo");
     checkStripeLink(a.stripeLink.trim());
     if (a.filePath && (a.filePath.includes("..") || a.filePath.length > 300)) throw new Error("Percorso file non valido");
+    const provided = a.slug?.trim();
+    if (provided && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(provided)) throw new Error("Slug non valido");
     const slugBase = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "prodotto";
-    const slug = `${slugBase}-${Date.now().toString(36)}`;
+    const slug = provided || `${slugBase}-${Date.now().toString(36)}`;
+    const existing = await ctx.db
+      .query("products")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .first();
+    if (existing) return existing._id;
     return ctx.db.insert("products", {
       title,
       type: a.type,

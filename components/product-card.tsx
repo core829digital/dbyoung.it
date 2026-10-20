@@ -119,7 +119,9 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
         <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-4">
           <div className="flex items-baseline gap-2">
             {p.licenseOnly ? (
-              <span className="font-display text-lg font-bold text-fire-ember">{t.shop.customPrice}</span>
+              <span className="font-display text-lg font-bold text-fire-ember">
+                {p.price > 0 ? `${lang === "en" ? "from" : "da"} €${p.price}` : t.shop.customPrice}
+              </span>
             ) : (
               <>
                 <span className="font-display text-2xl font-bold text-white">€{p.price}</span>
