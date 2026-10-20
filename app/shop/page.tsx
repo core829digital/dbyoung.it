@@ -1,13 +1,12 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/product-card";
 import { Reveal } from "@/components/reveal";
 import { PRODUCTS, type Product } from "@/lib/data";
 import { useLang } from "@/lib/i18n";
 import { getCustomProducts } from "@/lib/analytics";
-import { cloudFetchProducts, convexConfigured } from "@/lib/backend";
 
 const FILTERS = [
   { key: 0, type: undefined as string | undefined },
@@ -23,19 +22,17 @@ function ShopInner() {
   const filter = searchParams.get("type") ?? undefined;
   const [custom, setCustom] = useState<Product[]>([]);
   useEffect(() => {
-    const local = getCustomProducts();
-    setCustom(local);
-    // Prodotti live da Convex (se il backend ha dati, sostituiscono i locali).
-    // Filtro anti-spazzatura: solo slug del catalogo ufficiale o pubblicati da /admin.
-    if (convexConfigured()) {
-      const known = new Set([...PRODUCTS, ...local].map((p) => p.slug));
-      cloudFetchProducts().then((cloud) => {
-        const clean = (cloud ?? []).filter((p) => known.has(p.slug));
-        if (clean.length > 0) setCustom(clean);
-      });
-    }
-  }, [filter]);
-  const catalog = [...custom, ...PRODUCTS];
+    // Catalogo ufficiale in lib/data.ts + eventuali prodotti creati da /admin (localStorage).
+    // I prodotti su Convex servono agli ordini/licenze, non allo storefront: niente duplicati.
+    setCustom(getCustomProducts());
+  }, []);
+  const catalog = useMemo(() => {
+    const bySlug = new Map<string, Product>();
+    for (const p of custom) bySlug.set(p.slug, p);
+    // Il catalogo ufficiale vince sempre sui duplicati.
+    for (const p of PRODUCTS) bySlug.set(p.slug, p);
+    return Array.from(bySlug.values());
+  }, [custom]);
   const shown = filter ? catalog.filter((p) => p.type === filter) : catalog;
 
   return (

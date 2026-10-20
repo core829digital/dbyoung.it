@@ -33,6 +33,25 @@ npx convex env list
 npx convex dev --once
 ```
 
+## 1b. Storage audio (Vercel Blob)
+
+I file audio (≈1 GB) **non** sono nel repo e non vengono deployati su Vercel. Servono da Vercel Blob:
+
+1. Vercel → **Storage → Blob → Create** (store `dbyoung-audio`).
+2. Copiare `BLOB_READ_WRITE_TOKEN` nella dashboard e in `.env.local`.
+3. Caricare i file (crea ZIP dei pack, salta il bundle):
+
+```powershell
+npx --yes tsx scripts/upload-blob.ts
+```
+
+Lo script stampa le env `BLOB_URL_*` e le salva in `.env.blob.local` (gitignored).
+Aggiungerle a `.env.local`, `.env.vercel.local` e alle env **Production** di Vercel.
+Senza `BLOB_URL_*` il download usa `private_audio/` in locale e in produzione risponde `410`.
+
+Il bundle (`bundle-completo`) non ha un file unico: il webhook emette **4 licenze separate**,
+una per ciascun sample pack. Così lo storage resta sotto 1 GB e i download sono più veloci.
+
 ## 2. Vercel (frontend + API)
 
 Aggiungere in **Production** (e Preview se serve):

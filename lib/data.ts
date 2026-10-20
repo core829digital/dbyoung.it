@@ -26,6 +26,15 @@ export interface Product {
 /** Artwork ufficiale per prodotti digitali */
 export const ARTWORK_PACKS = "/dimitri-potos/artwork-sample-packs.webp";
 
+/** Bundle: un acquisto → una licenza per ciascuno dei 4 sample pack. */
+export const BUNDLE_SLUG = "bundle-completo";
+export const BUNDLE_PACK_SLUGS = [
+  "velvet-tape-neo-soul-chillhop",
+  "melancholic-neo-soul-piano",
+  "opera-cinematic-orchestral-trap",
+  "velvet-nostalgia-cinematic",
+] as const;
+
 const ROOT = "AUDIO-UPLOADS-BEATS-SAMPLEPACKS-COLONNESONORE";
 
 /**

@@ -11,6 +11,8 @@
 import type * as auth from "../auth.js";
 import type * as bookings from "../bookings.js";
 import type * as crons from "../crons.js";
+import type * as crypto from "../crypto.js";
+import type * as guards from "../guards.js";
 import type * as licenses from "../licenses.js";
 import type * as messages from "../messages.js";
 import type * as newsletter from "../newsletter.js";
@@ -30,6 +32,8 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   bookings: typeof bookings;
   crons: typeof crons;
+  crypto: typeof crypto;
+  guards: typeof guards;
   licenses: typeof licenses;
   messages: typeof messages;
   newsletter: typeof newsletter;

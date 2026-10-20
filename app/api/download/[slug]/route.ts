@@ -5,6 +5,7 @@ import path from "path";
 import { ZipArchive } from "archiver";
 import { PRODUCTS } from "@/lib/data";
 import { cloudVerifyLicense } from "@/lib/backend";
+import { blobUrlForSlug } from "@/lib/blobStorage";
 
 export const runtime = "nodejs";
 
@@ -53,6 +54,20 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
   if (!product || !product.file) {
     return NextResponse.json({ error: "File non disponibile per questo prodotto." }, { status: 404 });
   }
+
+  // 2a. Produzione: redirect al blob firmato/non indicizzato (niente streaming Vercel).
+  const blob = blobUrlForSlug(slug);
+  if (blob) {
+    const url = new URL(blob);
+    // Forza il download invece dell'apertura inline (WAV/ZIP).
+    url.searchParams.set("download", "1");
+    return new Response(null, {
+      status: 302,
+      headers: { Location: url.toString(), "Cache-Control": "no-store" },
+    });
+  }
+
+  // 2b. Sviluppo locale: file in private_audio/ (path traversal impossibile)
   const base = path.join(process.cwd(), "private_audio");
   const target = path.normalize(path.join(base, product.file));
   if (!target.startsWith(base)) {
@@ -81,7 +96,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 
   // 3a. Cartella (sample pack) → ZIP generato in streaming
   if (stat.isDirectory()) {
-    const archive = new ZipArchive({ zlib: { level: 9 } });
+    // WAV/MP3 sono già poco comprimibili: livello 1 = ZIP molto più veloce.
+    const archive = new ZipArchive({ zlib: { level: 1 } });
     archive.on("error", () => undefined);
     archive.directory(target, product.slug);
     void archive.finalize();

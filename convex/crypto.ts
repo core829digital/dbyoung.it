@@ -28,7 +28,7 @@ export function randomHex(bytes: number): string {
 }
 
 export async function sha256Hex(data: string | Uint8Array): Promise<string> {
-  const buf = typeof data === "string" ? enc.encode(data) : data;
+  const buf = typeof data === "string" ? enc.encode(data) : new Uint8Array(data);
   return bytesToHex(new Uint8Array(await crypto.subtle.digest("SHA-256", buf)));
 }
 
@@ -38,7 +38,7 @@ async function hmacKey(secret: string): Promise<CryptoKey> {
 
 export async function hmacSha256Hex(secret: string, data: string | Uint8Array): Promise<string> {
   const key = await hmacKey(secret);
-  const buf = typeof data === "string" ? enc.encode(data) : data;
+  const buf = typeof data === "string" ? enc.encode(data) : new Uint8Array(data);
   return bytesToHex(new Uint8Array(await crypto.subtle.sign("HMAC", key, buf)));
 }
 
@@ -106,7 +106,7 @@ export async function verifyPassword(
 ): Promise<boolean> {
   const key = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveBits"]);
   const bits = await crypto.subtle.deriveBits(
-    { name: "PBKDF2", salt: hexToBytes(stored.salt), iterations: stored.iter, hash: "SHA-256" },
+    { name: "PBKDF2", salt: new Uint8Array(hexToBytes(stored.salt)), iterations: stored.iter, hash: "SHA-256" },
     key,
     256
   );
@@ -158,7 +158,7 @@ async function hotp(secret: Uint8Array, counter: number): Promise<string> {
     msg[i] = c & 0xff;
     c = Math.floor(c / 256);
   }
-  const key = await crypto.subtle.importKey("raw", secret, { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
+  const key = await crypto.subtle.importKey("raw", new Uint8Array(secret), { name: "HMAC", hash: "SHA-1" }, false, ["sign"]);
   const mac = new Uint8Array(await crypto.subtle.sign("HMAC", key, msg));
   const offset = mac[mac.length - 1] & 0x0f;
   const code =

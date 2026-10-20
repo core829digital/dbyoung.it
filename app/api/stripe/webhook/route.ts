@@ -6,7 +6,7 @@ import { signServerAction } from "@/lib/adminSign";
 import { sendMail, escapeHtml } from "@/lib/mail";
 import { buildLicensePdf } from "@/lib/licensePdf";
 import { slugForPriceId } from "@/lib/stripe";
-import { PRODUCTS } from "@/lib/data";
+import { PRODUCTS, BUNDLE_SLUG, BUNDLE_PACK_SLUGS } from "@/lib/data";
 import { api } from "@/convex/_generated/api";
 
 export const runtime = "nodejs";
@@ -103,23 +103,37 @@ export async function POST(req: Request) {
         for (const item of items) {
           const product = PRODUCTS.find((p) => p.slug === item.slug);
           if (!product || product.licenseOnly) continue;
-          let code = codeBySlug.get(item.slug);
-          if (!code) {
+
+          // Il bundle non è un file unico: emette 4 licenze, una per pack.
+          const targetSlugs: string[] = item.slug === BUNDLE_SLUG ? [...BUNDLE_PACK_SLUGS] : [item.slug];
+          const missing = targetSlugs.filter((s) => !codeBySlug.has(s) && PRODUCTS.some((p) => p.slug === s && !p.licenseOnly));
+
+          if (missing.length > 0) {
             const productId = await resolveProductId(c, item.slug);
-            if (!productId) continue;
-            code = deterministicCode(sessionId, item.slug);
-            await m(c, api.orders.create, "orders.create", { email }, {
-              productId, email, amount: product.price,
-              stripeSessionId: sessionId, stripeEventId: event.id,
-              ...(userId ? { userId } : {}), status: "paid",
-            });
-            await m(c, api.licenses.create, "licenses.create", { code }, {
-              code, productSlug: item.slug, email,
-              ...(userId ? { userId } : {}), stripeSessionId: sessionId,
-            });
-            codeBySlug.set(item.slug, code);
+            if (productId) {
+              await m(c, api.orders.create, "orders.create", { email }, {
+                productId, email, amount: product.price,
+                stripeSessionId: sessionId, stripeEventId: event.id,
+                ...(userId ? { userId } : {}), status: "paid",
+              });
+            }
+            for (const slug of missing) {
+              const code = deterministicCode(sessionId, slug);
+              await m(c, api.licenses.create, "licenses.create", { code }, {
+                code, productSlug: slug, email,
+                ...(userId ? { userId } : {}), stripeSessionId: sessionId,
+              });
+              codeBySlug.set(slug, code);
+            }
           }
-          lines.push({ title: product.title, code });
+
+          for (const slug of targetSlugs) {
+            const pack = PRODUCTS.find((p) => p.slug === slug);
+            const code = codeBySlug.get(slug);
+            if (pack && code && !lines.some((l) => l.code === code)) {
+              lines.push({ title: pack.title, code });
+            }
+          }
         }
 
         if (lines.length > 0) {
