@@ -2,7 +2,7 @@
  * Setup catalogo Stripe live per dbyoung.it — idempotente.
  * - Prodotti/Price marcati metadata project=dbyoung.it (non tocca l'altro progetto)
  * - lookup_key stabili per ritrovare i Price senza duplicati
- * - Crea il webhook https://dbyoung.it/api/stripe/webhook se assente
+ * - Crea il webhook https://www.dbyoung.it/api/stripe/webhook se assente
  * Uso: STRIPE_SECRET_KEY=rk_live_... node scripts/stripe-setup.mjs
  */
 const KEY = process.env.STRIPE_SECRET_KEY;
@@ -24,7 +24,7 @@ const CATALOG = [
   { slug: "produzione-personalizzata-acconto", name: "DBYoung — Produzione personalizzata (acconto)", desc: "Acconto per produzione su misura: composizione/beat personalizzato · da 350 €", amount: 35000, type: "custom" },
 ];
 
-const HOOK_URL = "https://dbyoung.it/api/stripe/webhook";
+const HOOK_URL = "https://www.dbyoung.it/api/stripe/webhook";
 const HOOK_EVENTS = [
   "checkout.session.completed",
   "checkout.session.async_payment_succeeded",

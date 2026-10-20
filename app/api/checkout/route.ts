@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       metaItems.push({ slug: item.slug, tier: item.tier });
     }
 
-    const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dbyoung.it";
+    const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dbyoung.it";
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       customer_email: email,

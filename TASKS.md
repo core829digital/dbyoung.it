@@ -10,7 +10,7 @@ Verificato con `vitest` (26 test verdi), `tsc --noEmit` pulito e `next build` ve
 Catalogo creato con metadata `project=dbyoung.it` (non tocca i prodotti OneSpec/Immedial):
 Give a Start 150 €, Sacred Voices 120 €, Velvet & Tape 25 €, Melancholic Piano 30 €,
 Opera Cinematic 27 €, Velvet Nostalgia 35 €, Bundle completo 95 €, Produzione personalizzata (acconto) 350 €.
-Webhook dedicato `we_1USbKBDPkknNT3wYEjuRRetk` → `https://dbyoung.it/api/stripe/webhook`.
+Webhook dedicato `we_1USbKBDPkknNT3wYEjuRRetk` → `https://www.dbyoung.it/api/stripe/webhook`.
 Checkout live di prova creato e annullato: totale 245,00 € corretto (Give a Start + Bundle).
 Resend verificato (domini `dbyoung.it`, `onespec.eu`, `core829.net` verificati; email di test inviata).
 **Resta all'operatore (servizi live):**

@@ -116,7 +116,7 @@ export async function POST(req: Request) {
             lines.push({ title: product.title, code });
           }
           if (lines.length > 0) {
-            const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dbyoung.it";
+            const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dbyoung.it";
             let attachments: Array<{ filename: string; content: Buffer }> | undefined;
             try {
               const pdf = await buildLicensePdf({

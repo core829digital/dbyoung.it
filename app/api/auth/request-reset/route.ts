@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     );
     // Risposta identica che l'account esista o no (anti-enumeration)
     if (value?.token) {
-      const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://dbyoung.it";
+      const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dbyoung.it";
       const link = `${base}/account/reset?token=${encodeURIComponent(value.token)}`;
       await sendMail({
         to: email,

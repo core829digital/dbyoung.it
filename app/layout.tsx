@@ -12,14 +12,14 @@ export const metadata: Metadata = {
   title: "DBYoung · Dimitri Bouturline — Jazz, Blues, Classica & Moderna | Beat, Sample Pack, Eventi",
   description:
     "DBYoung (Dimitri Bouturline): compositore a 360° di jazz, blues, musica classica e moderna. Compra beat e sample pack con strumenti veri, organizza eventi con Isola Events e collabora con l'artista.",
-  metadataBase: new URL("https://dbyoung.it"),
-  alternates: { canonical: "https://dbyoung.it" },
+  metadataBase: new URL("https://www.dbyoung.it"),
+  alternates: { canonical: "https://www.dbyoung.it" },
   robots: { index: true, follow: true },
   icons: { icon: "/dimitri-potos/dbyoung-logo.webp", apple: "/dimitri-potos/dbyoung-logo.webp" },
   openGraph: {
     title: "DBYoung · Dimitri Bouturline",
     description: "Jazz, Blues, Classica & Moderna · Beat · Sample Pack · Eventi",
-    url: "https://dbyoung.it",
+    url: "https://www.dbyoung.it",
     siteName: "DBYoung",
     type: "website",
     locale: "it_IT",
@@ -38,7 +38,7 @@ const jsonLd = {
   "@type": "MusicGroup",
   name: "DBYoung",
   founder: { "@type": "Person", name: "Dimitri Bouturline" },
-  url: "https://dbyoung.it",
+  url: "https://www.dbyoung.it",
   genre: ["Jazz", "Blues", "Classical", "Modern"],
 };
 
