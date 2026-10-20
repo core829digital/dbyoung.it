@@ -98,25 +98,31 @@ export async function POST(req: Request) {
         type ExistingLicense = { productSlug: string; code: string };
         const existing = ((await q(c, api.licenses.listBySession, "licenses.listBySession", { stripeSessionId: sessionId }, { stripeSessionId: sessionId })) ?? []) as ExistingLicense[];
         const codeBySlug = new Map(existing.map((l) => [l.productSlug, l.code]));
+        const existingOrders = ((await q(c, api.orders.listBySession, "orders.listBySession", { stripeSessionId: sessionId }, { stripeSessionId: sessionId })) ?? []) as Array<{ productId: string }>;
+        const orderedProductIds = new Set(existingOrders.map((o) => String(o.productId)));
         const lines: Array<{ title: string; code: string }> = [];
 
         for (const item of items) {
           const product = PRODUCTS.find((p) => p.slug === item.slug);
           if (!product || product.licenseOnly) continue;
 
+          // L'ordine è idempotente per (sessione, prodotto): un retry non lo duplica,
+          // ma un pack comprato singolarmente insieme al bundle viene comunque registrato.
+          const productId = await resolveProductId(c, item.slug);
+          if (productId && !orderedProductIds.has(String(productId))) {
+            await m(c, api.orders.create, "orders.create", { email }, {
+              productId, email, amount: product.price,
+              stripeSessionId: sessionId, stripeEventId: event.id,
+              ...(userId ? { userId } : {}), status: "paid",
+            });
+            orderedProductIds.add(String(productId));
+          }
+
           // Il bundle non è un file unico: emette 4 licenze, una per pack.
           const targetSlugs: string[] = item.slug === BUNDLE_SLUG ? [...BUNDLE_PACK_SLUGS] : [item.slug];
           const missing = targetSlugs.filter((s) => !codeBySlug.has(s) && PRODUCTS.some((p) => p.slug === s && !p.licenseOnly));
 
           if (missing.length > 0) {
-            const productId = await resolveProductId(c, item.slug);
-            if (productId) {
-              await m(c, api.orders.create, "orders.create", { email }, {
-                productId, email, amount: product.price,
-                stripeSessionId: sessionId, stripeEventId: event.id,
-                ...(userId ? { userId } : {}), status: "paid",
-              });
-            }
             for (const slug of missing) {
               const code = deterministicCode(sessionId, slug);
               await m(c, api.licenses.create, "licenses.create", { code }, {

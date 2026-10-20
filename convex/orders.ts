@@ -37,6 +37,18 @@ export const create = mutation({
   },
 });
 
+export const listBySession = query({
+  args: { stripeSessionId: v.string(), _auth: serverAuthArg },
+  handler: async (ctx, a) => {
+    const sid = a.stripeSessionId.trim().slice(0, 200);
+    await mustServerAuth({ stripeSessionId: sid }, a._auth as ServerAuth, "orders.listBySession");
+    return ctx.db
+      .query("orders")
+      .withIndex("by_session", (q) => q.eq("stripeSessionId", sid))
+      .collect();
+  },
+});
+
 export const listByUser = query({
   args: { userId: v.id("users"), _auth: serverAuthArg },
   handler: async (ctx, a) => {

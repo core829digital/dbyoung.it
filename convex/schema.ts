@@ -34,7 +34,9 @@ export default defineSchema({
     stripeEventId: v.optional(v.string()),
     userId: v.optional(v.id("users")),
     status: v.string(),
-  }).index("by_user", ["userId"]),
+  })
+    .index("by_user", ["userId"])
+    .index("by_session", ["stripeSessionId"]),
 
   stripeEvents: defineTable({
     eventId: v.string(),
