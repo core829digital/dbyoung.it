@@ -12,6 +12,12 @@ npx convex dev --once     # deploy funzioni sul deployment attivo
 Impostare le env **sul deployment Convex** (stessi valori del server Next):
 
 ```powershell
+powershell -ExecutionPolicy Bypass -File scripts/set-convex-env.ps1
+```
+
+Lo script legge i valori da `.env.local` e non li stampa. In alternativa:
+
+```powershell
 npx convex env set ADMIN_ACTION_SECRET "<64 hex>"
 npx convex env set TOTP_ENCRYPTION_KEY "<base64 32 byte>"
 npx convex env set ADMIN_EMAILS "contact.core829@gmail.com"

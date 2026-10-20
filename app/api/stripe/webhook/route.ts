@@ -94,16 +94,20 @@ export async function POST(req: Request) {
         const userId = (session.metadata?.userId as string) || undefined;
         if (!email || items.length === 0) break;
 
-        // Già esaudita? (retry) → niente duplicati
-        const existing = (await q(c, api.licenses.listBySession, "licenses.listBySession", { stripeSessionId: sessionId }, { stripeSessionId: sessionId })) as Array<unknown>;
-        if (!existing || existing.length === 0) {
-          const lines: Array<{ title: string; code: string }> = [];
-          for (const item of items) {
-            const product = PRODUCTS.find((p) => p.slug === item.slug);
-            if (!product || product.licenseOnly) continue;
+        // Fulfillment idempotente per prodotto: i retry completano solo ciò che manca.
+        type ExistingLicense = { productSlug: string; code: string };
+        const existing = ((await q(c, api.licenses.listBySession, "licenses.listBySession", { stripeSessionId: sessionId }, { stripeSessionId: sessionId })) ?? []) as ExistingLicense[];
+        const codeBySlug = new Map(existing.map((l) => [l.productSlug, l.code]));
+        const lines: Array<{ title: string; code: string }> = [];
+
+        for (const item of items) {
+          const product = PRODUCTS.find((p) => p.slug === item.slug);
+          if (!product || product.licenseOnly) continue;
+          let code = codeBySlug.get(item.slug);
+          if (!code) {
             const productId = await resolveProductId(c, item.slug);
             if (!productId) continue;
-            const code = deterministicCode(sessionId, item.slug);
+            code = deterministicCode(sessionId, item.slug);
             await m(c, api.orders.create, "orders.create", { email }, {
               productId, email, amount: product.price,
               stripeSessionId: sessionId, stripeEventId: event.id,
@@ -113,35 +117,39 @@ export async function POST(req: Request) {
               code, productSlug: item.slug, email,
               ...(userId ? { userId } : {}), stripeSessionId: sessionId,
             });
-            lines.push({ title: product.title, code });
+            codeBySlug.set(item.slug, code);
           }
-          if (lines.length > 0) {
-            const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dbyoung.it";
-            let attachments: Array<{ filename: string; content: Buffer }> | undefined;
-            try {
-              const pdf = await buildLicensePdf({
-                email,
-                orderId: sessionId,
-                date: new Date((session.created ?? Math.floor(Date.now() / 1000)) * 1000),
-                items: lines,
-              });
-              attachments = [{ filename: `DBYoung-licenza-${sessionId.slice(-8)}.pdf`, content: Buffer.from(pdf) }];
-            } catch {
-              // Il PDF non deve bloccare la consegna dei codici
-            }
-            await sendMail({
-              to: email,
-              subject: "Il tuo ordine DBYoung è pronto",
-              html: `<h1>Grazie per l'acquisto!</h1>
-                <p>In allegato trovi il certificato di licenza con i diritti d'autore di <strong>Dimitri Bouturline (D.B Young)</strong>.</p>
-                <ul>${lines
-                  .map((l) => `<li>${escapeHtml(l.title)} — codice <strong>${escapeHtml(l.code)}</strong></li>`)
-                  .join("")}</ul>
-                <p>Scarica da <a href="${escapeHtml(base)}/libreria">${escapeHtml(base)}/libreria</a> inserendo i codici.</p>
-                <p style="font-size:12px;color:#666">Credito obbligatorio: Dimitri Bouturline (D.B Young). La rivendita dei file originali è vietata.</p>`,
-              ...(attachments ? { attachments } : {}),
+          lines.push({ title: product.title, code });
+        }
+
+        if (lines.length > 0) {
+          const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dbyoung.it";
+          let attachments: Array<{ filename: string; content: Buffer }> | undefined;
+          try {
+            const pdf = await buildLicensePdf({
+              email,
+              orderId: sessionId,
+              date: new Date((session.created ?? Math.floor(Date.now() / 1000)) * 1000),
+              items: lines,
             });
+            attachments = [{ filename: `DBYoung-licenza-${sessionId.slice(-8)}.pdf`, content: Buffer.from(pdf) }];
+          } catch {
+            // Il PDF non deve bloccare la consegna dei codici
           }
+          await sendMail({
+            to: email,
+            subject: "Il tuo ordine DBYoung è pronto",
+            html: `<h1>Grazie per l'acquisto!</h1>
+              <p>In allegato trovi il certificato di licenza con i diritti d'autore di <strong>Dimitri Bouturline (D.B Young)</strong>.</p>
+              <ul>${lines
+                .map((l) => `<li>${escapeHtml(l.title)} — codice <strong>${escapeHtml(l.code)}</strong></li>`)
+                .join("")}</ul>
+              <p>Scarica da <a href="${escapeHtml(base)}/libreria">${escapeHtml(base)}/libreria</a> inserendo i codici.</p>
+              <p style="font-size:12px;color:#666">Credito obbligatorio: Dimitri Bouturline (D.B Young). La rivendita dei file originali è vietata.</p>`,
+            ...(attachments ? { attachments } : {}),
+            // Stesso ordine → stessa email: Resend deduplica i retry di Stripe
+            idempotencyKey: `order-${sessionId}`,
+          });
         }
         await m(c, api.stripeEvents.claim, "stripeEvents.claim", { eventId: event.id }, { eventId: event.id, type: event.type });
         break;
