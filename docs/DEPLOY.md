@@ -4,14 +4,20 @@ Ultimo aggiornamento: 2026-10-20.
 
 ## 1. Convex (backend)
 
+**Produzione:** `festive-ptarmigan-321` (dev: `accurate-walrus-397`).
+
 ```powershell
 npx convex login          # una volta, browser
-npx convex dev --once     # deploy funzioni sul deployment attivo
+$env:CONVEX_DEPLOYMENT='prod:festive-ptarmigan-321'
+npx convex deploy         # deploy funzioni + schema in produzione
 ```
+
+Per il solo sviluppo: `npx convex dev --once` (usa `dev:accurate-walrus-397` da `.env.local`).
 
 Impostare le env **sul deployment Convex** (stessi valori del server Next):
 
 ```powershell
+$env:CONVEX_DEPLOYMENT='prod:festive-ptarmigan-321'
 powershell -ExecutionPolicy Bypass -File scripts/set-convex-env.ps1
 ```
 
@@ -58,10 +64,10 @@ Aggiungere in **Production** (e Preview se serve):
 
 ```
 NEXT_PUBLIC_SITE_URL=https://www.dbyoung.it
-NEXT_PUBLIC_CONVEX_URL=https://accurate-walrus-397.convex.cloud
-CONVEX_HTTP_URL=https://accurate-walrus-397.convex.site
-NEXT_PUBLIC_CONVEX_SITE_URL=https://accurate-walrus-397.convex.site
-CONVEX_DEPLOYMENT=dev:accurate-walrus-397
+NEXT_PUBLIC_CONVEX_URL=https://festive-ptarmigan-321.convex.cloud
+CONVEX_HTTP_URL=https://festive-ptarmigan-321.convex.site
+NEXT_PUBLIC_CONVEX_SITE_URL=https://festive-ptarmigan-321.convex.site
+CONVEX_DEPLOYMENT=prod:festive-ptarmigan-321
 
 RESEND_API_KEY=...
 RESEND_FROM=DBYoung <noreply@dbyoung.it>
@@ -84,19 +90,30 @@ ADMIN_IP_ALLOWLIST=            # vuoto = nessun filtro; inserire IP/CIDR quando 
 
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=...
 TURNSTILE_SECRET_KEY=...
+
+BLOB_READ_WRITE_TOKEN=...
+BLOB_URL_GIVE_A_START=...
+BLOB_URL_SACRED_VOICES=...
+BLOB_URL_VELVET_TAPE_NEO_SOUL_CHILLHOP=...
+BLOB_URL_MELANCHOLIC_NEO_SOUL_PIANO=...
+BLOB_URL_OPERA_CINEMATIC_ORCHESTRAL_TRAP=...
+BLOB_URL_VELVET_NOSTALGIA_CINEMATIC=...
 ```
 
 Dopo l'aggiunta: **Redeploy** (le env non si applicano ai deploy già esistenti).
 
 Scorciatoia: il file locale **gitignored** `.env.vercel.local` contiene già tutte le variabili
-(Stripe, Convex, Resend, admin) pronte per la produzione. Dopo `npx vercel login`:
+(Stripe, Convex prod, Resend, admin) pronte per la produzione. Due modi:
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/push-vercel-env.ps1 -Project dbyoung.it
-npx vercel --prod --project dbyoung.it
-```
+- **Dashboard (manuale):** Project → Settings → Environment Variables → *Import .env* (o incolla
+  il contenuto di `.env.vercel.local`) → ambiente **Production** → Save.
+- **CLI:** dopo `npx vercel login`:
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File scripts/push-vercel-env.ps1 -Project dbyoung.it
+  npx vercel --prod --project dbyoung.it
+  ```
 
-Le due chiavi Turnstile vanno aggiunte a mano quando disponibili.
+Le chiavi Turnstile e le `BLOB_*` vanno aggiunte prima del redeploy.
 
 ## 3. Turnstile
 
