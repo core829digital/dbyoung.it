@@ -63,6 +63,16 @@ TURNSTILE_SECRET_KEY=...
 
 Dopo l'aggiunta: **Redeploy** (le env non si applicano ai deploy già esistenti).
 
+Scorciatoia: il file locale **gitignored** `.env.vercel.local` contiene già tutte le variabili
+(Stripe, Convex, Resend, admin) pronte per la produzione. Dopo `npx vercel login`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/push-vercel-env.ps1 -Project dbyoung.it
+npx vercel --prod --project dbyoung.it
+```
+
+Le due chiavi Turnstile vanno aggiunte a mano quando disponibili.
+
 ## 3. Turnstile
 
 Senza `TURNSTILE_SECRET_KEY` in produzione i form pubblici, login e checkout vengono rifiutati
