@@ -120,3 +120,21 @@ Vedi risposta estesa in chat del 2026-10-14. In breve, oltre ai task 1–7:
 - [ ] Backup/restore `private_audio/` + procedura fulfillment manuale; test download ZIP in produzione
 - [ ] Monitoraggio (Sentry), uptime, inbox operativa (info@), runbook + piano rollback
 - [ ] Dry-run completo in staging: registrazione → 2FA → carrello → pagamento test → licenza → download → refund
+
+---
+
+## 9. Go-live 2026-10-20 — stato reale
+
+- [x] Convex **produzione** `festive-ptarmigan-321`: funzioni deployate, env `ADMIN_ACTION_SECRET`, `TOTP_ENCRYPTION_KEY`, `ADMIN_EMAILS` impostate.
+- [x] Webhook firmato testato su produzione: licenze create, email con PDF consegnata, retry senza duplicati.
+- [x] Dati di test rimossi da produzione (7 licenze, 4 ordini, 4 eventi `evt_test_*`).
+- [x] Bundle = 4 licenze separate (un pack per licenza), niente ZIP unico da 468 MB.
+- [x] Download locale: beat 53 MB in ~0,4 s; pack 104 MB in ~5 s; bundle 468 MB in ~17 s.
+- [ ] Creare **Vercel Blob store** e mettere `BLOB_READ_WRITE_TOKEN` in `.env.local`.
+- [ ] Caricare i file: `npx --yes tsx scripts/upload-blob.ts`; aggiungere `BLOB_URL_*` a `.env.local`, `.env.vercel.local` e Vercel.
+- [ ] Aggiungere le env di produzione su Vercel (incluse `TURNSTILE_*` e `BLOB_*`) e fare **Redeploy**.
+- [ ] Chiavi **Cloudflare Turnstile** (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`): senza, in produzione form/login/checkout vengono rifiutati.
+- [ ] Verifica post-deploy: webhook con firma invalida → **400** (non 500); checkout live con coupon 100% → licenza → email → download Blob.
+- [ ] Stripe Tax / registrazioni IVA (le fatture/ricevute vengono emesse, ma l'IVA automatizzata va configurata in dashboard).
+- [ ] Coupon 30% Natale/Nuovo Anno: creare quando sono definite le date esatte.
+- [ ] Backup `private_audio/` e runbook di ripristino.
