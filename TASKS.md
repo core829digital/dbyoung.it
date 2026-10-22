@@ -210,3 +210,13 @@ Utile da rieseguire dopo ogni modifica grossa: `npx --yes tsx scripts/health-che
       protocollo) e valida `new URL`; fallback `https://www.dbyoung.it`. Il checkout ora funziona
       anche finché l'env su Vercel non è corretta (pulirla comunque: vedere passo 6).
 - 401 su `/api/auth/me` e "OTS parsing error WOFF" di Cloudflare: rumore benigno.
+- [x] **SIMULAZIONE pagato+consegna (2026-10-22, `scripts/simulate-order.mts`, zero costo)**:
+      sessione vera su Stripe LIVE (mai pagata) → evento `checkout.session.completed` firmato
+      con lo stesso `STRIPE_WEBHOOK_SECRET` → webhook prod 200 → ordine+licenza+email+PDF →
+      `verify` valid:true → download 302→presigned → GET range 206, file give-a-start.wav
+      53.169.278 B (`audio/wav`). CICLO COMPLETO CONFERMATO SENZA PAGARE.
+      - Licenza di prova ATTIVA per test cliente: **DBY-D6SU-NC6W** (Give a Start) su
+        contact.core829@gmail.com (email "Il tuo ordine DBYoung è pronto").
+      - [ ] Da fare a fine prova del cliente: pulire i dati di simulazione da Convex prod
+        (1 ordine + 1 licenza + evt_sim_*) e lasciare scadere la sessione cs_live_….
+      - [ ] Refund → revoca: da testare solo su acquisto REALE (con payment_intent vero).
