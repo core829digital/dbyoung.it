@@ -204,3 +204,9 @@ Utile da rieseguire dopo ogni modifica grossa: `npx --yes tsx scripts/health-che
       webhook firma richiesta e idempotente (testate in go-live precedente).
 - [ ] Dopo il primo acquisto vero: refund di un acquisto reale → revoca licenza automatica.
 - Note: warning CSP `data:` in console = rumore interno dell'iframe Cloudflare (non nostro).
+- [x] **BUG FIX 500 checkout (2026-10-22, commit 77e201d)**: Runtime Logs Vercel →
+      StripeInvalidRequestError `url_invalid` su `success_url`: `NEXT_PUBLIC_SITE_URL`
+      malformata nell'env di Vercel. Fix: la route normalizza la env (virgolette/spazi/
+      protocollo) e valida `new URL`; fallback `https://www.dbyoung.it`. Il checkout ora funziona
+      anche finché l'env su Vercel non è corretta (pulirla comunque: vedere passo 6).
+- 401 su `/api/auth/me` e "OTS parsing error WOFF" di Cloudflare: rumore benigno.
