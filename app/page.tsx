@@ -75,7 +75,7 @@ export default function Home() {
           </Reveal>
           <Reveal delay={0.15}>
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 md:aspect-square">
-              <Image src={PHOTOS.homeArtist} alt="Dimitri Bouturline — DBYoung" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
+              <Image src={PHOTOS.homeArtist} alt="Dimitri Boutourline — DBYoung" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
               <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between rounded-2xl border border-white/10 bg-black/60 px-4 py-3 backdrop-blur">
                 <div className="flex items-center gap-2 text-sm text-white/80"><Flame className="h-4 w-4 text-fire" /> {t.home.artistBadge}</div>

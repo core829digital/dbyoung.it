@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-fire-hot">Legale</p>
         <h1 className="font-display text-4xl font-semibold tracking-tight md:text-5xl">Privacy Policy</h1>
         <p className="mt-4 rounded-2xl border border-fire/25 bg-fire/10 px-4 py-3 text-sm text-fire-ember">{t.legal.enNote} {t.legal.privacyEn}</p>
-        <p className="mt-3 text-sm text-white/50">Ultimo aggiornamento: ottobre 2026 · Titolare: Dimitri Bouturline (DBYoung) — dbyoung.it</p>
+        <p className="mt-3 text-sm text-white/50">Ultimo aggiornamento: ottobre 2026 · Titolare: Dimitri Boutourline (DBYoung) — dbyoung.it</p>
         <Block t="1. Dati che raccogliamo">
           <p>Nome, email, contenuti dei messaggi (form contatti/booking), email newsletter, dati d&apos;ordine (prodotti acquistati, importi, esiti pagamento via Stripe) e dati tecnici anonimi/aggregati di navigazione (pagine viste, click, dispositivo).</p>
           <p><strong>Account (portale /account):</strong> email, password in forma solo-hash (mai in chiaro), stato verifica email, segreti 2FA cifrati, codici di recupero in hash, sessioni di accesso (con IP/user-agent per sicurezza). Protezione anti-bot Cloudflare Turnstile sui form pubblici e sul login.</p>

@@ -131,7 +131,7 @@ export const DBYoungHero = () => {
                   <div className="absolute -inset-1.5 rounded-full bg-gradient-to-br from-fire via-fire-hot to-fire-deep" />
                   <Image
                     src={PHOTOS.heroProfile}
-                    alt="Dimitri Bouturline — DBYoung"
+                    alt="Dimitri Boutourline — DBYoung"
                     width={288}
                     height={288}
                     priority

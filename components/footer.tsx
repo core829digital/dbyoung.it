@@ -72,7 +72,7 @@ export function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-white/40 md:flex-row md:px-8">
-          <p>© {new Date().getFullYear()} DBYoung · Dimitri Bouturline · dbyoung.it — {t.footer.rights} · Powered by CORE829</p>
+          <p>© {new Date().getFullYear()} DBYoung · Dimitri Boutourline · dbyoung.it — {t.footer.rights} · Powered by CORE829</p>
         </div>
       </div>
     </footer>

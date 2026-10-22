@@ -37,7 +37,7 @@ const it = {
   },
   hero: {
     badge: "Jazz · Blues · Classica · Moderna",
-    name: "Dimitri Bouturline",
+    name: "Dimitri Boutourline",
     desc: "Compositore a 360°: jazz, blues, musica classica e moderna con un tono attivo ed energetico — strumenti veri ed eventi organizzati che muovono club e festival. Compra beat, sample pack o affidagli il tuo evento.",
     ctaShop: "Compra i Beat",
     ctaEvent: "Organizza il tuo Evento",
@@ -54,7 +54,7 @@ const it = {
     artistTitleB: "tono moderno",
     artistTitleC: ", attivo ed energetico.",
     artistText:
-      "Dimitri Bouturline, in arte DBYoung, è un compositore a 360 gradi: spazia dal jazz al blues fino alla musica classica e moderna, scrivendo, arrangiando e producendo con strumenti vivi e reali — dal piano ai fiati, dalla chitarra alla batteria. Un ponte tra tradizione jazz, blues e classica e il suono di oggi.",
+      "Dimitri Boutourline, in arte DBYoung, è un compositore a 360 gradi: spazia dal jazz al blues fino alla musica classica e moderna, scrivendo, arrangiando e producendo con strumenti vivi e reali — dal piano ai fiati, dalla chitarra alla batteria. Un ponte tra tradizione jazz, blues e classica e il suono di oggi.",
     artistCta1: "Scopri la storia",
     artistCta2: "Ascolta",
     artistBadge: "Eventi · Studio · Collab",
@@ -85,7 +85,7 @@ const it = {
     newsPrivacyLink: "Privacy Policy",
   },
   artist: {
-    kicker: "Dimitri Bouturline",
+    kicker: "Dimitri Boutourline",
     p1: "Artista e compositore a 360 gradi: jazz, blues, musica classica e moderna con un tono attivo ed energetico.",
     p2: "Lavora con strumenti vivi e reali — piano, chitarra, basso, batteria e fiati — tra studio, composizione e organizzazione di eventi. Il suo suono unisce la tradizione jazz, blues e classica alla produzione contemporanea: perfetto per artisti che cercano beat con carattere, sample pack registrati live ed eventi organizzati e prodotti ad alta energia.",
     ctaShop: "Compra i Beat",
@@ -145,7 +145,7 @@ const it = {
     kicker: "Eventi · Isola Events",
     titleA: "Organizza il tuo evento",
     titleB: "con DBYoung",
-    sub: "Club, festival, eventi privati e collaborazioni: Dimitri Bouturline li organizza e li produce con Isola Events — non si esibisce come cantante. Scegli un orario dal calendario per una call conoscitiva gratuita, oppure scrivici direttamente.",
+    sub: "Club, festival, eventi privati e collaborazioni: Dimitri Boutourline li organizza e li produce con Isola Events — non si esibisce come cantante. Scegli un orario dal calendario per una call conoscitiva gratuita, oppure scrivici direttamente.",
     isolaBadge: "A cura di Isola Events · Fattoria Isola",
     isolaText:
       "Isola Events è l'organizzazione di Dimitri per eventi eleganti e memorabili: standard alto, clientela esigente, cura sartoriale di ogni dettaglio — dalla direzione artistica alla produzione. Il portale dedicato con i due format e la storia della location è in arrivo su events.dbyoung.it.",
@@ -217,7 +217,7 @@ const it = {
     err: "Qualcosa non ha funzionato. Riprova o scrivici via email.",
   },
   footer: {
-    tag: "Dimitri Bouturline — compositore a 360° (jazz, blues, classica, moderna) e organizzatore di eventi con Isola Events.",
+    tag: "Dimitri Boutourline — compositore a 360° (jazz, blues, classica, moderna) e organizzatore di eventi con Isola Events.",
     explore: "Esplora",
     shop: "Shop",
     legal: "Legale",
@@ -231,7 +231,7 @@ const it = {
     privacyEn: "We collect only what we need (contact details, orders via Stripe, newsletter with consent). No card data stored. Rights (access, deletion, portability): privacy@dbyoung.it.",
     terminiEn: "Buying a file grants a usage license (not copyright). Digital goods: withdrawal ends when download starts. Live contracts are agreed separately in writing.",
     cookieEn: "Only technical cookies by default. Third-party cookies (Calendly, Stripe, Spotify) load only after your consent.",
-    gdprEn: "Data controller: Dimitri Bouturline (DBYoung). Processors: Vercel, Convex, Stripe, Resend, Calendly. Exercise your rights: privacy@dbyoung.it (reply within 30 days).",
+    gdprEn: "Data controller: Dimitri Boutourline (DBYoung). Processors: Vercel, Convex, Stripe, Resend, Calendly. Exercise your rights: privacy@dbyoung.it (reply within 30 days).",
   },
 };
 
@@ -251,7 +251,7 @@ const en: Dict = {
   },
   hero: {
     badge: "Jazz · Blues · Classical · Modern",
-    name: "Dimitri Bouturline",
+    name: "Dimitri Boutourline",
     desc: "360° composer: jazz, blues, classical and modern music with an active, energetic tone — real instruments and curated events that move clubs and festivals. Shop beats, sample packs or trust him with your event.",
     ctaShop: "Shop Beats",
     ctaEvent: "Plan Your Event",
@@ -268,7 +268,7 @@ const en: Dict = {
     artistTitleB: "modern tone",
     artistTitleC: " — active and energetic.",
     artistText:
-      "Dimitri Bouturline, aka DBYoung, is a 360-degree composer: from jazz to blues, classical and modern music — writing, arranging and producing with living, real instruments, from piano to horns, guitar to drums. A bridge between jazz, blues and classical tradition and today's sound.",
+      "Dimitri Boutourline, aka DBYoung, is a 360-degree composer: from jazz to blues, classical and modern music — writing, arranging and producing with living, real instruments, from piano to horns, guitar to drums. A bridge between jazz, blues and classical tradition and today's sound.",
     artistCta1: "Discover the story",
     artistCta2: "Listen",
     artistBadge: "Events · Studio · Collabs",
@@ -299,7 +299,7 @@ const en: Dict = {
     newsPrivacyLink: "Privacy Policy",
   },
   artist: {
-    kicker: "Dimitri Bouturline",
+    kicker: "Dimitri Boutourline",
     p1: "360-degree artist and composer: jazz, blues, classical and modern music with an active, energetic tone.",
     p2: "He works with living, real instruments — piano, guitar, bass, drums and horns — across studio, composition and event production. His sound blends jazz, blues and classical tradition with contemporary production: perfect for artists seeking characterful beats, live-recorded sample packs and high-energy organized events.",
     ctaShop: "Shop Beats",
@@ -359,7 +359,7 @@ const en: Dict = {
     kicker: "Events · Isola Events",
     titleA: "Plan your event",
     titleB: "with DBYoung",
-    sub: "Clubs, festivals, private events and collaborations: Dimitri Bouturline organizes and produces them with Isola Events — he does not perform as a singer. Pick a slot for a free intro call, or write to us directly.",
+    sub: "Clubs, festivals, private events and collaborations: Dimitri Boutourline organizes and produces them with Isola Events — he does not perform as a singer. Pick a slot for a free intro call, or write to us directly.",
     isolaBadge: "Curated by Isola Events · Fattoria Isola",
     isolaText:
       "Isola Events is Dimitri's organization for elegant, memorable events: high standards, demanding clientele, tailored care of every detail — from artistic direction to production. The dedicated portal with the two formats and the location story is coming soon at events.dbyoung.it.",
@@ -430,7 +430,7 @@ const en: Dict = {
     err: "Something went wrong. Try again or email us.",
   },
   footer: {
-    tag: "Dimitri Bouturline — 360° composer (jazz, blues, classical, modern) and event organizer with Isola Events.",
+    tag: "Dimitri Boutourline — 360° composer (jazz, blues, classical, modern) and event organizer with Isola Events.",
     explore: "Explore",
     shop: "Shop",
     legal: "Legal",
@@ -444,7 +444,7 @@ const en: Dict = {
     privacyEn: "We collect only what we need (contact details, orders via Stripe, newsletter with consent). No card data stored. Rights (access, deletion, portability): privacy@dbyoung.it.",
     terminiEn: "Buying a file grants a usage license (not copyright). Digital goods: withdrawal ends when download starts. Live contracts are agreed separately in writing.",
     cookieEn: "Only technical cookies by default. Third-party cookies (Calendly, Stripe, Spotify) load only after your consent.",
-    gdprEn: "Data controller: Dimitri Bouturline (DBYoung). Processors: Vercel, Convex, Stripe, Resend, Calendly. Exercise your rights: privacy@dbyoung.it (reply within 30 days).",
+    gdprEn: "Data controller: Dimitri Boutourline (DBYoung). Processors: Vercel, Convex, Stripe, Resend, Calendly. Exercise your rights: privacy@dbyoung.it (reply within 30 days).",
   },
 };
 

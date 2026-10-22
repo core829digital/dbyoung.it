@@ -160,12 +160,12 @@ export async function POST(req: Request) {
             to: email,
             subject: "Il tuo ordine DBYoung è pronto",
             html: `<h1>Grazie per l'acquisto!</h1>
-              <p>In allegato trovi il certificato di licenza con i diritti d'autore di <strong>Dimitri Bouturline (D.B Young)</strong>.</p>
+              <p>In allegato trovi il certificato di licenza con i diritti d'autore di <strong>Dimitri Boutourline (D.B Young)</strong>.</p>
               <ul>${lines
                 .map((l) => `<li>${escapeHtml(l.title)} — codice <strong>${escapeHtml(l.code)}</strong></li>`)
                 .join("")}</ul>
               <p>Scarica da <a href="${escapeHtml(base)}/libreria">${escapeHtml(base)}/libreria</a> inserendo i codici.</p>
-              <p style="font-size:12px;color:#666">Credito obbligatorio: Dimitri Bouturline (D.B Young). La rivendita dei file originali è vietata.</p>`,
+              <p style="font-size:12px;color:#666">Credito obbligatorio: Dimitri Boutourline (D.B Young). La rivendita dei file originali è vietata.</p>`,
             ...(attachments ? { attachments } : {}),
             // Stesso ordine → stessa email: Resend deduplica i retry di Stripe
             idempotencyKey: `order-${sessionId}`,

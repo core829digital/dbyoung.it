@@ -1,4 +1,4 @@
-# DBYoung.it — Dimitri Bouturline
+# DBYoung.it — Dimitri Boutourline
 
 Sito + e-commerce dell'artista **DBYoung** (Next.js 15 + Convex + Stripe Payment Link + Resend + Calendly).
 
@@ -9,7 +9,7 @@ Brand: **Arancione Fuoco `#FF4D00`** · **Nero Ossidiana `#0A0A0B`** · **Bianco
 | Route | Contenuto |
 |---|---|
 | `/` | Hero DBYoung (stile Prisma), stats, shop preview, eventi CTA, newsletter |
-| `/artista` | Chi è Dimitri Bouturline (foto reali, gallery) |
+| `/artista` | Chi è Dimitri Boutourline (foto reali, gallery) |
 | `/musica` | Spotify + social ufficiali + player integrato |
 | `/opere` | Curriculum composizioni (classica/moderna/jazz/blues) — file in `/public/opere/` |
 | `/shop` | Beat, Sample Pack, Offerte (filtri `?type=`) — checkout via Stripe Link |

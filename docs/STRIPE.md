@@ -51,7 +51,7 @@ node scripts/stripe-inspect.mjs           # sola lettura
 - `billing_address_collection: required`, `locale: it`.
 - I diritti sono conferiti **solo** dal webhook firmato; `/checkout/success` non concede nulla.
 - Email post-acquisto: codici licenza + **certificato PDF** con diritto d'autore
-  (“Dimitri Bouturline (D.B Young)”) generato da `lib/licensePdf.ts`.
+  (“Dimitri Boutourline (D.B Young)”) generato da `lib/licensePdf.ts`.
 
 ## Variabili d'ambiente
 

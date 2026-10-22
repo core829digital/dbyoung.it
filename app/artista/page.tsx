@@ -28,7 +28,7 @@ export default function ArtistaPage() {
         </Reveal>
         <Reveal delay={0.15}>
           <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10">
-            <Image src={PHOTOS.artistPortrait} alt="Dimitri Bouturline — DBYoung" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
+            <Image src={PHOTOS.artistPortrait} alt="Dimitri Boutourline — DBYoung" fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
           </div>
         </Reveal>
       </div>
@@ -54,7 +54,7 @@ export default function ArtistaPage() {
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           {PHOTOS.gallery.map((src, i) => (
             <Reveal key={src} delay={i * 0.1} className="card-hover relative aspect-[3/4] overflow-hidden rounded-[2rem] border border-white/10">
-              <Image src={src} alt={`Dimitri Bouturline — DBYoung (${i + 1})`} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
+              <Image src={src} alt={`Dimitri Boutourline — DBYoung (${i + 1})`} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover" />
             </Reveal>
           ))}
         </div>

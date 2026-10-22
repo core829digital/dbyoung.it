@@ -17,7 +17,7 @@ export interface LicensePdfInput {
   items: LicensePdfItem[];
 }
 
-const AUTHOR = "Dimitri Bouturline (D.B Young)";
+const AUTHOR = "Dimitri Boutourline (D.B Young)";
 const BRAND = "DBYoung";
 
 function wrap(text: string, maxChars: number): string[] {
@@ -88,9 +88,9 @@ export async function buildLicensePdf(input: LicensePdfInput): Promise<Uint8Arra
 
   const terms = [
     "1. Licenza non esclusiva, mondiale e perpetua per utilizzare i file acquistati in produzioni musicali e audiovisive, secondo il piano indicato sull'ordine.",
-    "2. Credito obbligatorio: in crediti, descrizioni e metadati va menzionato l'autore \"Dimitri Bouturline (D.B Young)\".",
+    "2. Credito obbligatorio: in crediti, descrizioni e metadati va menzionato l'autore \"Dimitri Boutourline (D.B Young)\".",
     "3. È vietata la rivendita, la ridistribuzione o la messa a disposizione dei file originali (beat, melodie, stem) come prodotto autonomo o sample pack.",
-    "4. I diritti d'autore e di sfruttamento economico delle composizioni restano di Dimitri Bouturline. L'acquisto non trasferisce la titolarità del copyright.",
+    "4. I diritti d'autore e di sfruttamento economico delle composizioni restano di Dimitri Boutourline. L'acquisto non trasferisce la titolarità del copyright.",
     "5. La licenza è valida solo per il codice sopra riportato e per l'ordine indicato; in caso di rimborso o chargeback la licenza si intende revocata.",
     "6. Per licenze esclusive, sync, broadcast o produzioni personalizzate contattare info@dbyoung.it.",
   ];
