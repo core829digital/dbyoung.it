@@ -8,6 +8,9 @@ import { api } from "@/convex/_generated/api";
 
 export async function POST(req: Request) {
   try {
+    if (!(req.headers.get("content-type") ?? "").includes("form")) {
+      return fail("Formato richiesta non valido (atteso form-data).", 400);
+    }
     const form = await req.formData();
     const parsed = newsletterSchema.safeParse({
       email: form.get("email"),
