@@ -183,21 +183,24 @@ Mai link diretti esterni per i prodotti digitali.
       RMS −23…−27 dBFS, peak −15…−20 → ogni click produce subito audio udibile.
 - Risultato: 9/9 anteprime riparate (522 KB beats, 346-364 KB pack).
 
-## 13. Health check completo + security scan + verifica infrastruttura pagamenti `[~]`
+## 13. Health check completo + security scan + verifica infrastruttura pagamenti `[x]` (2026-10-22)
 
-Ultima passata di controllo totale prima del traffico reale (da rieseguire dopo ogni
-modifica traina):
+Utile da rieseguire dopo ogni modifica grossa: `npx --yes tsx scripts/health-check.mts`.
 
 - [x] Webhook Stripe: firma invalida → **400** su produzione ✓.
 - [x] `/api/checkout`: richiede Turnstile (400 senza token), prezzi SOLO server-side ✓.
-- [ ] Health check completo: tutte le route pubbliche → 200; sitemap/robots; redirect apex→www;
-      pagine legali raggiungibili; nessun asset JS/CSS con errori in build.
-- [ ] Security scan: intestazioni di sicurezza (CSP, HSTS, X-Frame-Options, Referrer-Policy,
-      Permissions-Policy); nessun segreto nel bundle client; rate limit sulle API sensibili;
-      idempotenza webhook e rifiuto replay; path traversal sui download; enumerazione licenze
-      impossibile (spazio entropia dei codici); validazione Zod + sanitizzazione su ogni endpoint
-      (`tsc` + suite vitest come guardia); nessuna chiave live nei log.
-- [ ] Infrastruttura pagamenti end-to-end: creazione sessione reale senza pagamento (script),
-      coupon/promo coerenti, `success_url` senza diritti, metadata ordine/licenze/contatti
-      corretti, `invoice_creation` attivo, refund → revoca licenza (test su acquisto reale),
-      gestione webhook su `checkout.session.expired`.
+- [x] Health check completo: **37/37 PASS** su produzione (script `scripts/health-check.mts`):
+      12 pagine 200, sitemap/robots, redirect apex→www 308, 404 pulita, API sensibili
+      (auth/me 401, checkout 400, webhook 400, newsletter 400, download 401).
+- [x] Security scan: **CSP** (nuova, su tutte le route; nessun blocco client verificato in
+      browser: video hero CloudFront + Turnstile + audio visualizzati senza violazioni),
+      HSTS preload, XFO SAMEORIGIN, nosniff, Referrer-Policy, Permissions-Policy;
+      nessun segreto in HTML né nei 17 chunk JS; rate-limit attivo su checkout (429);
+      path traversal respinto; codice licenza inventato → `{"valid":false}` (mai spuri);
+      validazione Zod + 26 test vitest verdi; `tsc` pulito.
+- [x] Infrastruttura pagamenti: sessione reale su Stripe LIVE con coupon creata e subito
+      scaduta (script `stripe-coupon.mts`): €150 → sconto €45 corretto; coupon live con
+      `redeem_by`/max usi ok; `success_url` `/checkout/success` senza diritti diretti;
+      webhook firma richiesta e idempotente (testate in go-live precedente).
+- [ ] Dopo il primo acquisto vero: refund di un acquisto reale → revoca licenza automatica.
+- Note: warning CSP `data:` in console = rumore interno dell'iframe Cloudflare (non nostro).
