@@ -48,7 +48,9 @@ export async function POST(req: Request) {
       metaItems.push({ slug: item.slug, tier: item.tier });
     }
 
-    const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dbyoung.it";
+    // Base URL robusto: normalizza virgolette/spazi/protocollo e valida —
+    // una NEXT_PUBLIC_SITE_URL malformata su Vercel non deve più rompere il checkout.
+    const base = normalizeBaseUrl(process.env.NEXT_PUBLIC_SITE_URL) ?? "https://www.dbyoung.it";
     // Promo Natale: sconto -30% applicato SOLO dentro la finestra decisa server-side.
     // Il coupon è attivo su Stripe ma non è usabile dal client furbo:
     // nessun `allow_promotion_codes`, solo questa decisione centralizzata.
@@ -92,8 +94,22 @@ export async function POST(req: Request) {
   }
 }
 
-/** Creazione idempotente del coupon promo: id fisso + finestra di sicurezza. */
-async function ensureHolidayCoupon(stripe: Stripe): Promise<Stripe.Coupon> {
+/** URL base sicuro per success/cancel: toglie virgolette/spazi, forza https, valida. */
+function normalizeBaseUrl(raw: string | undefined): string | null {
+  let v = (raw ?? "").trim().replace(/^["']+|["']+$/g, "").trim();
+  if (!v) return null;
+  if (!/^https?:\/\//i.test(v)) v = `https://${v.replace(/^\/+/, "")}`;
+  while (v.endsWith("/")) v = v.slice(0, -1);
+  try {
+    const u = new URL(v);
+    if (u.protocol !== "https:" || !u.hostname.includes(".")) return null;
+    return u.origin;
+  } catch {
+    return null;
+  }
+}
+
+/** Creazione idempotente del coupon promo: id fisso + finestra di sicurezza. */async function ensureHolidayCoupon(stripe: Stripe): Promise<Stripe.Coupon> {
   const existing = await stripe.coupons.retrieve(HOLIDAY_PROMO.couponId).catch(() => null);
   if (existing) return existing;
   return stripe.coupons.create({
