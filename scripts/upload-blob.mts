@@ -1,15 +1,17 @@
 /**
- * Carica i file vendibili su Vercel Blob e stampa le env BLOB_URL_*.
+ * Carica i file vendibili su Vercel Blob (store PRIVATO) e stampa le env BLOB_PATH_*.
  * - Beat → file singolo
  * - Sample pack → ZIP creato al volo (livello 1)
  * - Bundle → NON caricato: emette 4 licenze separate per i 4 pack
  *
  * Uso:
- *   1. Creare un Blob store su Vercel e mettere BLOB_READ_WRITE_TOKEN in .env.local
- *   2. npx --yes tsx scripts/upload-blob.ts
+ *   1. Creare un Blob store su Vercel (Basta “Create” — private è la scelta giusta)
+ *      e mettere BLOB_READ_WRITE_TOKEN in .env.local
+ *   2. npx --yes tsx scripts/upload-blob.mts
  *
- * Il token NON viene mai stampato. Le URL generate vanno in .env.blob.local
- * (gitignored) e poi in .env.local / .env.vercel.local / Vercel.
+ * Il token NON viene mai stampato. I pathname generati vanno in `.env.blob.local`
+ * (gitignored) ma sono anche calcolabili lato server: le env servono solo come
+ * override esplicito.
  */
 import { createReadStream, createWriteStream, promises as fsp, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -86,22 +88,22 @@ for (const product of PRODUCTS) {
   const size = (await fsp.stat(uploadPath)).size;
   console.log(`↑ ${product.slug} — ${(size / 1024 / 1024).toFixed(1)} MB`);
   const blob = await put(key, createReadStream(uploadPath), {
-    access: "public",
+    access: "private",
     token,
     addRandomSuffix: false,
     allowOverwrite: true,
     multipart: size > 100 * 1024 * 1024,
     contentType,
   });
-  console.log(`✓ ${blob.url}`);
-  urls[product.slug] = blob.url;
+  console.log(`✓ ${blob.pathname}`);
+  urls[product.slug] = blob.pathname;
 
   if (uploadPath !== src) await fsp.unlink(uploadPath).catch(() => undefined);
 }
 
 const envLines = Object.entries(urls).map(
-  ([slug, url]) => `BLOB_URL_${slug.toUpperCase().replace(/[^A-Z0-9]+/g, "_")}=${url}`
+  ([slug, pathname]) => `BLOB_PATH_${slug.toUpperCase().replace(/[^A-Z0-9]+/g, "_")}=${pathname}`
 );
 writeFileSync(".env.blob.local", `${envLines.join("\n")}\n`);
-console.log("\n--- BLOB_URL (aggiungi a .env.local e Vercel) ---");
+console.log("\n--- BLOB_PATH (opzionali: il server le calcola da solo) ---");
 for (const line of envLines) console.log(line);

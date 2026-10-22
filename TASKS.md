@@ -131,7 +131,7 @@ Vedi risposta estesa in chat del 2026-10-14. In breve, oltre ai task 1–7:
 - [x] Bundle = 4 licenze separate (un pack per licenza), niente ZIP unico da 468 MB.
 - [x] Download locale: beat 53 MB in ~0,4 s; pack 104 MB in ~5 s; bundle 468 MB in ~17 s.
 - [ ] Creare **Vercel Blob store** e mettere `BLOB_READ_WRITE_TOKEN` in `.env.local`.
-- [ ] Caricare i file: `npx --yes tsx scripts/upload-blob.ts`; aggiungere `BLOB_URL_*` a `.env.local`, `.env.vercel.local` e Vercel.
+- [ ] Caricare i file: `npx --yes tsx scripts/upload-blob.mts`; aggiungere `BLOB_URL_*` a `.env.local`, `.env.vercel.local` e Vercel.
 - [ ] Aggiungere le env di produzione su Vercel (incluse `TURNSTILE_*` e `BLOB_*`) e fare **Redeploy**.
 - [ ] Chiavi **Cloudflare Turnstile** (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`): senza, in produzione form/login/checkout vengono rifiutati.
 - [ ] Verifica post-deploy: webhook con firma invalida → **400** (non 500); checkout live con coupon 100% → licenza → email → download Blob.

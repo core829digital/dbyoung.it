@@ -39,21 +39,24 @@ npx convex env list
 npx convex dev --once
 ```
 
-## 1b. Storage audio (Vercel Blob)
+## 1b. Storage audio (Vercel Blob — store PRIVATO)
 
 I file audio (≈1 GB) **non** sono nel repo e non vengono deployati su Vercel. Servono da Vercel Blob:
 
-1. Vercel → **Storage → Blob → Create** (store `dbyoung-audio`).
-2. Copiare `BLOB_READ_WRITE_TOKEN` nella dashboard e in `.env.local`.
+1. Vercel → **Storage → Start → Blob → Create** (store privato, nome `dbyoung-audio`).
+2. Copiare `BLOB_READ_WRITE_TOKEN` in `.env.local` **e nelle env production di Vercel**
+   (il server lo usa a runtime per emettere gli URL presigned dopo la verifica licenza).
 3. Caricare i file (crea ZIP dei pack, salta il bundle):
 
 ```powershell
-npx --yes tsx scripts/upload-blob.ts
+npx --yes tsx scripts/upload-blob.mts
 ```
 
-Lo script stampa le env `BLOB_URL_*` e le salva in `.env.blob.local` (gitignored).
-Aggiungerle a `.env.local`, `.env.vercel.local` e alle env **Production** di Vercel.
-Senza `BLOB_URL_*` il download usa `private_audio/` in locale e in produzione risponde `410`.
+Lo script stampa i pathname `BLOB_PATH_*` e li salva in `.env.blob.local` (gitignored): sono
+override opzionali, il server li calcola comunque (`beat .wav`, `pack .zip`).
+Lo store è **privato**: a download avvenuta la verifica della licenza, `/api/download` emette
+un **URL presigned GET valido ~10 minuti** e risponde `302`. Nessun URL pubblico in natura.
+Senza store/token in produzione il download risponde `404`/"non disponibile".
 
 Il bundle (`bundle-completo`) non ha un file unico: il webhook emette **4 licenze separate**,
 una per ciascun sample pack. Così lo storage resta sotto 1 GB e i download sono più veloci.
@@ -92,12 +95,12 @@ NEXT_PUBLIC_TURNSTILE_SITE_KEY=...
 TURNSTILE_SECRET_KEY=...
 
 BLOB_READ_WRITE_TOKEN=...
-BLOB_URL_GIVE_A_START=...
-BLOB_URL_SACRED_VOICES=...
-BLOB_URL_VELVET_TAPE_NEO_SOUL_CHILLHOP=...
-BLOB_URL_MELANCHOLIC_NEO_SOUL_PIANO=...
-BLOB_URL_OPERA_CINEMATIC_ORCHESTRAL_TRAP=...
-BLOB_URL_VELVET_NOSTALGIA_CINEMATIC=...
+BLOB_PATH_GIVE_A_START=...
+BLOB_PATH_SACRED_VOICES=...
+BLOB_PATH_VELVET_TAPE_NEO_SOUL_CHILLHOP=...
+BLOB_PATH_MELANCHOLIC_NEO_SOUL_PIANO=...
+BLOB_PATH_OPERA_CINEMATIC_ORCHESTRAL_TRAP=...
+BLOB_PATH_VELVET_NOSTALGIA_CINEMATIC=...
 ```
 
 Dopo l'aggiunta: **Redeploy** (le env non si applicano ai deploy già esistenti).

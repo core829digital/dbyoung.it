@@ -5,7 +5,7 @@ import path from "path";
 import { ZipArchive } from "archiver";
 import { PRODUCTS } from "@/lib/data";
 import { cloudVerifyLicense } from "@/lib/backend";
-import { blobUrlForSlug } from "@/lib/blobStorage";
+import { blobDownloadUrl } from "@/lib/blobStorage";
 
 export const runtime = "nodejs";
 
@@ -55,15 +55,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
     return NextResponse.json({ error: "File non disponibile per questo prodotto." }, { status: 404 });
   }
 
-  // 2a. Produzione: redirect al blob firmato/non indicizzato (niente streaming Vercel).
-  const blob = blobUrlForSlug(slug);
+  // 2a. Produzione: store Blob PRIVATO — emetto un GET presigned (~10 min)
+  // solo dopo la verifica della licenza (niente streaming pesante su Vercel).
+  const blob = await blobDownloadUrl(slug);
   if (blob) {
-    const url = new URL(blob);
-    // Forza il download invece dell'apertura inline (WAV/ZIP).
-    url.searchParams.set("download", "1");
     return new Response(null, {
       status: 302,
-      headers: { Location: url.toString(), "Cache-Control": "no-store" },
+      headers: { Location: blob, "Cache-Control": "no-store" },
     });
   }
 
