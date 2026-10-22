@@ -35,6 +35,31 @@ export const BUNDLE_PACK_SLUGS = [
   "velvet-nostalgia-cinematic",
 ] as const;
 
+/**
+ * Promo Natale 2026: -30% su tutto il catalogo digitale.
+ * La finestra è decisa SOLO lato server (checkout) e lato client solo per
+ * la UI (badge/prezzi): il coupon Stripe non è usabile fuori dal periodo.
+ * Date inclusive, fuso Romania (EET, UTC+2 in inverno).
+ */
+export const HOLIDAY_PROMO = {
+  couponId: "natale-30-2026",
+  couponName: "Natale DBYoung 30%",
+  percentOff: 30,
+  /** 23 dic 2026 00:00 EET → 5 gen 2027 23:59 EET */
+  startISO: "2026-12-23T00:00:00+02:00",
+  endISO: "2027-01-05T23:59:59+02:00",
+} as const;
+
+/** La promo è attiva a data corrente (decisione in un solo punto). */
+export function isHolidayPromoActive(now: Date = new Date()): boolean {
+  return now >= new Date(HOLIDAY_PROMO.startISO) && now <= new Date(HOLIDAY_PROMO.endISO);
+}
+
+/** Prezzo visualizzato durante la promo (arrotondato al euro). */
+export function promoPrice(price: number, active = isHolidayPromoActive()): number {
+  return active ? Math.round(price * (1 - HOLIDAY_PROMO.percentOff / 100) * 100) / 100 : price;
+}
+
 const ROOT = "AUDIO-UPLOADS-BEATS-SAMPLEPACKS-COLONNESONORE";
 
 /**

@@ -25,3 +25,7 @@ npm-debug.log*
 coverage/
 .turbo/
 *.tsbuildinfo
+
+# backup anteprime originali (workflow fix-previews)
+scripts/_previews-backup/
+scripts/_previews-orig/

@@ -4,11 +4,12 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Play, Pause, ShoppingCart, FileDown, Lock, Plus, Check } from "lucide-react";
+import { Play, Pause, ShoppingCart, FileDown, Lock, Check } from "lucide-react";
 import type { Product } from "@/lib/data";
 import { useLang } from "@/lib/i18n";
 import { trackBuy } from "@/lib/analytics";
 import { useCart } from "@/lib/cart";
+import { HOLIDAY_PROMO, isHolidayPromoActive, promoPrice } from "@/lib/data";
 
 function fmt(s: number) {
   if (!isFinite(s)) return "0:00";
@@ -19,8 +20,10 @@ function fmt(s: number) {
 
 export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
   const { t, lang } = useLang();
-  const { add, has } = useCart();
+  const { add, has, openCart } = useCart();
   const inCart = has(p.slug);
+  const promo = !p.licenseOnly && isHolidayPromoActive();
+  const shownPrice = promo ? promoPrice(p.price) : p.price;
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [prog, setProg] = useState(0);
@@ -41,8 +44,7 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
     a.currentTime = ((e.clientX - rect.left) / rect.width) * a.duration;
   };
 
-  const buyHref = p.licenseOnly || p.stripeLink === "#" ? "/contatti" : p.stripeLink;
-  const buyExternal = !p.licenseOnly && p.stripeLink !== "#";
+  const buyHref = "/contatti";
   const desc = lang === "en" ? p.descriptionEn : p.description;
 
   return (
@@ -122,6 +124,11 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
               <span className="font-display text-lg font-bold text-fire-ember">
                 {p.price > 0 ? `${lang === "en" ? "from" : "da"} €${p.price}` : t.shop.customPrice}
               </span>
+            ) : promo ? (
+              <>
+                <span className="font-display text-2xl font-bold text-fire-ember">€{shownPrice}</span>
+                <span className="text-sm text-white/40 line-through">€{p.price}</span>
+              </>
             ) : (
               <>
                 <span className="font-display text-2xl font-bold text-white">€{p.price}</span>
@@ -129,25 +136,28 @@ export function ProductCard({ p, index = 0 }: { p: Product; index?: number }) {
               </>
             )}
           </div>
-          {buyExternal ? (
-            <a href={p.stripeLink} onClick={() => trackBuy(p.id)} target="_blank" rel="noreferrer" className="btn-fire flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold">
-              <ShoppingCart className="h-4 w-4" /> {t.shop.buy}
-            </a>
-          ) : (
+          {buyHref === "/contatti" && p.licenseOnly ? (
             <Link href={buyHref} onClick={() => trackBuy(p.id)} className="btn-fire flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold">
-              <ShoppingCart className="h-4 w-4" /> {p.licenseOnly ? t.shop.request : t.shop.buy}
+              <ShoppingCart className="h-4 w-4" /> {t.shop.request}
             </Link>
+          ) : (
+            <button
+              onClick={() => {
+                add(p.slug);
+                openCart();
+                trackBuy(p.id);
+              }}
+              className="btn-fire flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
+              aria-label={`${t.shop.add}: ${p.title}`}
+            >
+              <ShoppingCart className="h-4 w-4" /> {inCart ? t.shop.added : t.shop.buy}
+            </button>
           )}
         </div>
-        {!p.licenseOnly && (
-          <button
-            onClick={() => { add(p.slug); trackBuy(p.id); }}
-            disabled={inCart}
-            className="mt-2.5 flex items-center justify-center gap-1.5 rounded-full border border-white/15 py-2 text-xs text-white/70 transition-colors hover:border-fire/50 hover:text-white disabled:opacity-60"
-          >
-            {inCart ? <Check className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
-            {inCart ? "Nel carrello" : "Aggiungi al carrello"}
-          </button>
+        {promo && (
+          <p className="mt-2 text-center text-[11px] font-semibold text-fire-ember">
+            −{HOLIDAY_PROMO.percentOff}% {t.cart.promoLabel.toLowerCase()} · €{shownPrice}
+          </p>
         )}
         <Link href="/libreria" className="mt-2.5 flex items-center justify-center gap-1.5 text-xs text-white/40 transition-colors hover:text-fire-hot">
           <FileDown className="h-3.5 w-3.5" /> {t.shop.owned} {t.shop.libraryCta}

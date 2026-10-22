@@ -130,11 +130,74 @@ Vedi risposta estesa in chat del 2026-10-14. In breve, oltre ai task 1–7:
 - [x] Dati di test rimossi da produzione (7 licenze, 4 ordini, 4 eventi `evt_test_*`).
 - [x] Bundle = 4 licenze separate (un pack per licenza), niente ZIP unico da 468 MB.
 - [x] Download locale: beat 53 MB in ~0,4 s; pack 104 MB in ~5 s; bundle 468 MB in ~17 s.
-- [ ] Creare **Vercel Blob store** e mettere `BLOB_READ_WRITE_TOKEN` in `.env.local`.
-- [ ] Caricare i file: `npx --yes tsx scripts/upload-blob.mts`; aggiungere `BLOB_URL_*` a `.env.local`, `.env.vercel.local` e Vercel.
-- [ ] Aggiungere le env di produzione su Vercel (incluse `TURNSTILE_*` e `BLOB_*`) e fare **Redeploy**.
-- [ ] Chiavi **Cloudflare Turnstile** (`NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`): senza, in produzione form/login/checkout vengono rifiutati.
-- [ ] Verifica post-deploy: webhook con firma invalida → **400** (non 500); checkout live con coupon 100% → licenza → email → download Blob.
-- [ ] Stripe Tax / registrazioni IVA (le fatture/ricevute vengono emesse, ma l'IVA automatizzata va configurata in dashboard).
-- [ ] Coupon 30% Natale/Nuovo Anno: creare quando sono definite le date esatte.
+- [x] Vercel Blob **store privato**: 6 file (~570 MB) caricati, smoke-test firmato/non firmato 6/6 OK (`scripts/verify-blob.mts`).
+- [x] Env di produzione su Vercel (32 variabili) + Redeploy eseguito dal cliente.
+- [x] Chiavi **Cloudflare Turnstile** configurate (secret verificata con siteverify).
+- [x] Verifica post-deploy (2026-10-22): webhook firma invalida → **400** ✓; `/api/checkout` → **400** "anti-bot mancante" (route e env sane) ✓.
+- [x] Coupon 30%: implementato con finestra server-side 23 dic → 5 gen (task 11).
+- [x] Sentry/uptime: non richiesto per ora (decisione 2026-10-22).
+- [ ] Checkout live end-to-end nel browser: carrello → Stripe → licenza → email → download Blob presigned.
+- [ ] Stripe Tax / IVA — n/a per l'azienda (Romania, senza IVA addebitabile): ricevute/fatture già emesse senza IVA.
 - [ ] Backup `private_audio/` e runbook di ripristino.
+
+## 10. Workflow shop → carrello → checkout `[x]`
+
+Requisito: il pulsante dello shop aggiunge SEMPRE al carrello e apre il drawer; l'utente
+sceglie se continuare a comprare o procedere al checkout e al pagamento su Stripe.
+Mai link diretti esterni per i prodotti digitali.
+
+- [x] `lib/cart.tsx`: stato `open/openCart/closeCart` nel contesto (drawer globale).
+- [x] `components/cart-drawer.tsx`: pannello laterale con mini-lista, rimozione item, totale,
+      pulsanti **Continua a comprare** e **Vai al checkout · Paga con Stripe**.
+- [x] `components/product-card.tsx`: il pulsante acquisto dei prodotti digitali aggiunge al
+      carrello e apre il drawer (diventa "Nel carrello ✓"); solo `licenseOnly` → /contatti.
+- [x] Drawer montato a livello root (`app/layout.tsx`, dentro `CartProvider`).
+- [x] i18n IT/EN per carrello e promo (`t.cart`, `t.shop.add/added`).
+- Criterio di accettazione: aggiunta → drawer → checkout → Stripe session → webhook → licenza.
+
+## 11. Promo Natale 30% (23 dic 2026 → 5 gen 2027) `[x]`
+
+- [x] `lib/data.ts`: `HOLIDAY_PROMO` (id coupon fisso `natale-30-2026`), `isHolidayPromoActive()`, `promoPrice()`.
+- [x] `app/api/checkout`: sconto applicato **solo server-side** dentro la finestra via
+      `discounts:[{coupon}]`; coupon creato idempotentemente con `redeem_by` = 5 gen
+      (niente `allow_promotion_codes`: il client non può applicarlo da solo).
+- [x] UI promo solo quando attiva: badge −30% e prezzo barrato su product-card,
+      sconto nel drawer e nel riepilogo checkout.
+- [x] Coupon creato su **Stripe LIVE** (2026-10-22, `scripts/stripe-coupon.mts`):
+      `natale-30-2026` 30% once, `redeem_by`=1799186399 (5 gen 23:59 ora Romania), max 500.
+- [x] Prova sessione reale con discount su LIVE: €150 → sconto €45 (totale €105), session
+      subito scaduta (zero impatto). Compatibile con i Price ID.
+- [ ] Prima sessione reale col coupon il 23 dic (prova committendo un acquisto vero) e
+      conferma che dopo il 5 gen il sconto non è più applicabile (`redeem_by` blocca).
+- Criterio di accettazione: zero modi per riscattare il coupon fuori finestra.
+
+## 12. Anteprime udibili al click `[x]`
+
+- [x] Analisi RMS file per file (`scripts/analyze-previews.mts`): pack-opera muto (-146 dBFS),
+      melancholic 19,5 s di silenzio iniziale, velvet-tape 17,5 s, nostalgia troppo basso.
+- [x] Rigenerazione MP3 (`scripts/fix-previews.mts`, mpg123-decoder + @breezystack/lamejs,
+      niente ffmpeg): pack rigenerati dai WAV sorgente (stems; chunk più denso di 30 s),
+      beats/colonne sonore normalizzati; +backup originali ripristinati da git
+      (`scripts/_previews-orig/`, gitignored).
+- [x] Verifica per file (analyze post-fix): **tutti** startSil ≤ 0,5 s, tailSil ≤ 1,8 s,
+      RMS −23…−27 dBFS, peak −15…−20 → ogni click produce subito audio udibile.
+- Risultato: 9/9 anteprime riparate (522 KB beats, 346-364 KB pack).
+
+## 13. Health check completo + security scan + verifica infrastruttura pagamenti `[~]`
+
+Ultima passata di controllo totale prima del traffico reale (da rieseguire dopo ogni
+modifica traina):
+
+- [x] Webhook Stripe: firma invalida → **400** su produzione ✓.
+- [x] `/api/checkout`: richiede Turnstile (400 senza token), prezzi SOLO server-side ✓.
+- [ ] Health check completo: tutte le route pubbliche → 200; sitemap/robots; redirect apex→www;
+      pagine legali raggiungibili; nessun asset JS/CSS con errori in build.
+- [ ] Security scan: intestazioni di sicurezza (CSP, HSTS, X-Frame-Options, Referrer-Policy,
+      Permissions-Policy); nessun segreto nel bundle client; rate limit sulle API sensibili;
+      idempotenza webhook e rifiuto replay; path traversal sui download; enumerazione licenze
+      impossibile (spazio entropia dei codici); validazione Zod + sanitizzazione su ogni endpoint
+      (`tsc` + suite vitest come guardia); nessuna chiave live nei log.
+- [ ] Infrastruttura pagamenti end-to-end: creazione sessione reale senza pagamento (script),
+      coupon/promo coerenti, `success_url` senza diritti, metadata ordine/licenze/contatti
+      corretti, `invoice_creation` attivo, refund → revoca licenza (test su acquisto reale),
+      gestione webhook su `checkout.session.expired`.

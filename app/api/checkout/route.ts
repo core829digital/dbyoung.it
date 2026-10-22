@@ -8,7 +8,7 @@ import { rateLimit, limitKey, maybeCleanupRateLimits } from "@/lib/rateLimit";
 import { getSessionUser } from "@/lib/serverConvex";
 import { readSessionToken } from "@/lib/session";
 import { priceIdForSlug } from "@/lib/stripe";
-import { PRODUCTS } from "@/lib/data";
+import { PRODUCTS, HOLIDAY_PROMO, isHolidayPromoActive } from "@/lib/data";
 
 /**
  * Crea una Checkout Session Stripe.
@@ -49,12 +49,19 @@ export async function POST(req: Request) {
     }
 
     const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.dbyoung.it";
+    // Promo Natale: sconto -30% applicato SOLO dentro la finestra decisa server-side.
+    // Il coupon è attivo su Stripe ma non è usabile dal client furbo:
+    // nessun `allow_promotion_codes`, solo questa decisione centralizzata.
+    const discounts = isHolidayPromoActive()
+      ? [{ coupon: (await ensureHolidayCoupon(stripe)).id }]
+      : undefined;
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       customer_email: email,
       locale: "it",
       billing_address_collection: "required",
       line_items,
+      ...(discounts ? { discounts } : {}),
       metadata: {
         project: "dbyoung.it",
         email,
@@ -79,7 +86,23 @@ export async function POST(req: Request) {
 
     // I diritti vengono conferiti SOLO dal webhook firmato (mai da questa risposta)
     return ok({ url: session.url });
-  } catch {
+  } catch (e) {
+    console.error("[checkout] errore creazione sessione:", e);
     return fail("Checkout non riuscito, riprova.", 500);
   }
+}
+
+/** Creazione idempotente del coupon promo: id fisso + finestra di sicurezza. */
+async function ensureHolidayCoupon(stripe: Stripe): Promise<Stripe.Coupon> {
+  const existing = await stripe.coupons.retrieve(HOLIDAY_PROMO.couponId).catch(() => null);
+  if (existing) return existing;
+  return stripe.coupons.create({
+    id: HOLIDAY_PROMO.couponId,
+    name: `${HOLIDAY_PROMO.couponName} (${HOLIDAY_PROMO.percentOff}%)`,
+    percent_off: HOLIDAY_PROMO.percentOff,
+    duration: "once",
+    redeem_by: Math.floor(new Date(HOLIDAY_PROMO.endISO).getTime() / 1000),
+    max_redemptions: 500,
+    metadata: { project: "dbyoung.it", promo: "natale-2026" },
+  });
 }

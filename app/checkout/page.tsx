@@ -6,10 +6,12 @@ import { Trash2, ShieldCheck } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { TurnstileWidget } from "@/components/turnstile";
 import { useCart } from "@/lib/cart";
-import { PRODUCTS } from "@/lib/data";
+import { useLang } from "@/lib/i18n";
+import { PRODUCTS, HOLIDAY_PROMO, isHolidayPromoActive, promoPrice } from "@/lib/data";
 
 export default function CheckoutPage() {
   const { items, remove, clear } = useCart();
+  const { t } = useLang();
   const [email, setEmail] = useState("");
   const [accept, setAccept] = useState(false);
   const [token, setToken] = useState("");
@@ -23,6 +25,11 @@ export default function CheckoutPage() {
   }, []);
 
   const total = items.reduce((s, i) => s + (PRODUCTS.find((p) => p.slug === i.slug)?.price ?? 0), 0);
+  const promo = isHolidayPromoActive();
+  const totalAfterPromo = items.reduce((s, i) => {
+    const p = PRODUCTS.find((x) => x.slug === i.slug);
+    return p ? s + promoPrice(p.price, promo) : s;
+  }, 0);
 
   const pay = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +78,10 @@ export default function CheckoutPage() {
                 <li key={i.slug} className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/40 p-4">
                   <div>
                     <p className="text-sm font-semibold text-white">{p.title}</p>
-                    <p className="text-xs text-white/45">€{p.price} · licenza base (file WAV)</p>
+                    <p className="text-xs text-white/45">
+                      {promo ? <s className="mr-1 text-white/35">€{p.price}</s> : null}
+                      €{promoPrice(p.price, promo)} · {t.shop.types[p.type] ?? p.type} (licenza base)
+                    </p>
                   </div>
                   <button onClick={() => remove(i.slug)} aria-label={`Rimuovi ${p.title}`} className="text-white/40 hover:text-red-300">
                     <Trash2 className="h-4 w-4" />
@@ -80,7 +90,13 @@ export default function CheckoutPage() {
               );
             })}
           </ul>
-          <p className="mt-4 text-right font-display text-2xl font-bold">Totale €{total}</p>
+          <p className="mt-4 text-right font-display text-2xl font-bold">Totale €{promo ? totalAfterPromo.toFixed(2) : total}</p>
+          {promo && (
+            <p className="mt-1 text-right text-sm text-fire-ember">
+              <s className="mr-2 text-white/45">€{total}</s>
+              {t.cart.promoLabel} −{HOLIDAY_PROMO.percentOff}% · {t.cart.saved} €{(total - totalAfterPromo).toFixed(2)}
+            </p>
+          )}
 
           <form onSubmit={pay} className="mt-6 space-y-3">
             <div>
@@ -93,7 +109,7 @@ export default function CheckoutPage() {
             </label>
             <TurnstileWidget onToken={setToken} />
             <button disabled={status === "sending"} className="btn-fire flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-sm font-semibold disabled:opacity-60">
-              <ShieldCheck className="h-4 w-4" /> {status === "sending" ? "Reindirizzamento…" : `Paga €${total} con Stripe`}
+              <ShieldCheck className="h-4 w-4" /> {status === "sending" ? "Reindirizzamento…" : `Paga €${promo ? totalAfterPromo : total} con Stripe`}
             </button>
             {status === "err" && <p className="text-sm text-red-300">{err}</p>}
             <p className="text-[11px] text-white/40">I diritti (licenze download) vengono emessi solo a pagamento confermato da Stripe.</p>

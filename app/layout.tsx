@@ -7,6 +7,7 @@ import { Tracker } from "@/components/tracker";
 import { CookieBanner } from "@/components/cookie-banner";
 import { LanguageProvider } from "@/lib/i18n";
 import { CartProvider } from "@/lib/cart";
+import { CartDrawer } from "@/components/cart-drawer";
 
 export const metadata: Metadata = {
   title: "DBYoung · Dimitri Boutourline — Jazz, Blues, Classica & Moderna | Beat, Sample Pack, Eventi",
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <SmoothScroll />
           <Tracker />
           <Navbar />
+          <CartDrawer />
           <main id="contenuto" className="min-h-screen">{children}</main>
           <Footer />
           <CookieBanner />

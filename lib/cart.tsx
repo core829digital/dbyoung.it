@@ -27,12 +27,19 @@ interface CartCtx {
   remove: (slug: string) => void;
   clear: () => void;
   has: (slug: string) => boolean;
+  /** Drawer carrello (si apre da ogni aggiunta dallo shop). */
+  open: boolean;
+  openCart: () => void;
+  closeCart: () => void;
 }
 
-const Ctx = createContext<CartCtx>({ items: [], count: 0, add: () => undefined, remove: () => undefined, clear: () => undefined, has: () => false });
+const Ctx = createContext<CartCtx>(
+  { items: [], count: 0, add: () => undefined, remove: () => undefined, clear: () => undefined, has: () => false, open: false, openCart: () => undefined, closeCart: () => undefined }
+);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [open, setOpen] = useState(false);
   useEffect(() => setItems(read()), []);
   useEffect(() => {
     try {
@@ -51,8 +58,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       remove: (slug) => setItems((prev) => prev.filter((i) => i.slug !== slug)),
       clear: () => setItems([]),
       has: (slug) => items.some((i) => i.slug === slug),
+      open,
+      openCart: () => setOpen(true),
+      closeCart: () => setOpen(false),
     }),
-    [items]
+    [items, open]
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
